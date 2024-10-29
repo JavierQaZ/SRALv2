@@ -6,7 +6,6 @@ import Login from "./views/Login.jsx"
 function App() {
 
   return (
-    <Router>
       <Routes>
         <Route
           path = "/"
@@ -22,7 +21,6 @@ function App() {
           element = { <Home/> }/>
 
       </Routes>
-    </Router>
   )
 }
 
