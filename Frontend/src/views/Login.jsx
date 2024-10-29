@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import {Button} from "react-bootstrap";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link} from "react-router-dom";
 import auth from "../context/auth.jsx"
 import "../styles/Login.css";
+import { Card, CardHeader, CardTitle, CardFooter } from "react-bootstrap";
 
 function Login() {
     const [rut, setRut] = useState("");
@@ -31,56 +32,59 @@ function Login() {
     }
 
     return (
-        (sessionStorage.getItem("auth") != undefined)? (<Navigate to = "/home"/>): (<div className="container shadow login-container mt-4 ps-0 pe-0">
-        <div className="row">
-            <div className="col-md-6 order-md-1">
-                <img src="/big-vite.svg"/>
-            </div>
-            <div className="col-md-6 d-flex flex-column gap-4 pt-5 ps-5 pe-5 order-md-2">
-                <h3 className="mt-5">Sistema de Registro de Asistencia Laboral</h3>
-                <div>
-                    <div className="form-group">
-                        <label htmlFor="username">
-                            <h5>Usuario</h5>
-                    </label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="username"
-                        placeholder="Ingresa tu Usuario aquí"
-                        onChange={(e) => setRut(e.target.value)}
-                        value={rut}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">
-                        <h5>Contraseña</h5>
-                    </label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        placeholder="Ingresa tu contraseña aquí"
-                        onChange={(e) => setContrasena(e.target.value)}
-                        value={contrasena}
-                    />
-                </div>
-            </div>
-                <div className="d-flex justify-content-between">
-                    <Button
-                        variant="success"
-                        size="lg"
-                        style={{ borderRadius: "0px" }}
-                        onClick={handleClick}
-                    >
-                        Ingresar
-                    </Button>
-                    <div className = "bg-danger text-light">{exitoLogin}</div>
-                </div>
-            </div>
+        (sessionStorage.getItem("auth") != undefined)? (
+            <Navigate to = "/home"/>
+        ) : (
+        <div className="flex">
+            <Card className="card">
+                <CardHeader className="card-header">
+                    <CardTitle className="text-2xl font-bold text-center">SRAL - Login</CardTitle>
+                </CardHeader>
+                <form onSubmit={handleClick} className="space-y-4">
+                    <div className="space-y-2">
+
+                        <label
+                            className="label"
+                            htmlFor="username">
+                        Usuario</label>
+
+                        <input
+                            className="input"
+                            id="username"
+                            type="text"
+                            placeholder="Ingrese su Usuario"
+                            value={rut}
+                            onChange={(e) => setRut(e.target.value)}
+                            required
+                        />
+
+                    </div>
+                    <br/>
+                    <div className="space-y-2">
+                        <label className="label" htmlFor="password">Contraseña</label>
+                        <input
+                            className="input"
+                            id="password"
+                            type="password"
+                            placeholder="Ingrese su contraseña"
+                            value={contrasena}
+                            onChange={(e) => setContrasena(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <Button className="button" type="submit">Iniciar Sesión</Button>
+
+                    <Button className="button-signup">Registrarse</Button>
+                </form>
+                <CardFooter className="card-footer">
+                    <Link href="/forgot-password" className="text-sm text-center text-blue-500 hover:underline">
+                    ¿Olvidó su Contraseña?
+                    </Link>
+                </CardFooter>
+            </Card>
         </div>
-    </div>)
+    )
     )
 }
-// --
+
 export default Login;
