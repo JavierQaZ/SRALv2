@@ -17,17 +17,19 @@ function Home(){
         <div>
             <div className="container-fluid p-0 overflow-hidden">
                 <div className="row">
-                    <div className="sidebar col-auto col-sm-4 col-md-3 col-lg-3 col-xl-2 flex-column bg-mint min-vh-100 d-flex justify-content-between ">
+                    <div className="sidebar col-auto col-sm-4 col-md-3 col-lg-3 col-xl-2 flex-column bg-grey min-vh-100 d-flex justify-content-between ">
                         <div className="d-flex flex-column m-1" id="sidebar-container">
-                            <Link to=""className="d-inline-flex p-2" id="side-item-brand">
-                                <img
-                                src="/vite.svg" /* reemplazar con ícono real */
-                                alt="logo "
-                                width="40px"
-                                height="40px"
-                                />
-                                <h5 className="ms-2 mt-3">SRAL</h5>
-                            </Link>
+                            <div className="row main">
+                                <Link to=""className="d-inline-flex p-2 main-log" id="side-item-brand">
+                                    <img
+                                        src="/vite.svg" /* reemplazar con ícono real */
+                                        alt="logo"
+                                        width="30px"
+                                        height="30px"
+                                    />
+                                    <h5 className="main-title">SRAL</h5>
+                                </Link>
+                            </div>
                             <Link to="registroInicio" className="side-item">
                                 Registro Inicio
                             </Link>

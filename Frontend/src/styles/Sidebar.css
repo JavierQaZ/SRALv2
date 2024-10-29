@@ -1,7 +1,22 @@
-.bg-mint{
+.bg-grey{
     background-color: #cccccc;
 }
 
+.main{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    row-gap: 5px;
+    margin-top: 10px;
+    padding-left: 15px;
+}
+
+.main-title{
+    padding-left: 40px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+}
 
 #side-item-brand{
     text-decoration: none;
