@@ -10,7 +10,7 @@ function BloqueListado({ path, children, onClick }) {
 
     return (
         <Link to={path} className="bloque-listado" onClick={handleClick}>
-            <div className="mt-3">{children}</div>
+            <div>{children}</div>
         </Link>
     );
 }

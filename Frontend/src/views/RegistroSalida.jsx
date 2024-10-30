@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Alert from '@mui/material/Alert'
 
 function RegistroSalida() {
 
     const [rut, setRut] = useState("")
     const [currentDateTime, setCurrentDateTime] = useState(null);
     const [exitoRegistroSalida, setExitoRegistroSalida] = useState("")
+    const [alertType, setAlertType] = useState("success")
 
     const handleOnChangeRut = (e) => {
         console.log(e.target.value)
@@ -28,20 +30,30 @@ function RegistroSalida() {
         axios.post('http://localhost:5000/r_salida/add', registroRutSalida)
             .then((response) => {
                 setExitoRegistroSalida("Registro de salida exitoso")
+                setAlertType("success")
                 console.log("Registro de salida exitoso", response.data)
             })
             .catch ((error) => {
                 setExitoRegistroSalida("Error al registrar la salida")
+                setAlertType("error")
                 console.error("Error al registrar la salida: ", error)
         });
     }
 
+    useEffect(() => {
+        if (exitoRegistroSalida){
+            const timer = setTimeout(() => {
+                setExitoRegistroSalida(null);
+                setAlertType("success");
+            }, 7000);
+            return () => clearTimeout(timer);
+        }
+    }, [exitoRegistroSalida]);
+
     const ping = exitoRegistroSalida ? (
         <div className='mt-3'>
-            <p>
-                {exitoRegistroSalida}: <br/>
-                {rut} a las {currentDateTime}
-            </p>
+            <Alert severity={alertType}>{exitoRegistroSalida}: <br/>
+            {rut} a las {currentDateTime}</Alert>
         </div>
     ): null;
 

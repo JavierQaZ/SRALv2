@@ -1,8 +1,12 @@
 .content-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
     min-height: 60px;
-    padding-left: 15px;
-    padding-top: 13px;
-    font-size: 28px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 30px;
 }
 
 .content-body {
@@ -14,24 +18,26 @@
 }
 
 .bloque-listado {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
     text-decoration: none;
     color: black;
-    background-color: #BEE3DB;
-    border: 5px solid #89B0AE;
-    border-radius: 6px;
-    height: 100px;
+    background-color: #cccccc;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    height: 75px;
+    justify-content: center;
     width: 200px;
     max-height: 300px;
     max-width: 600px;
-    vertical-align: middle;
-    justify-content: center;
-    text-align: center;
-    align-items: center;
     margin: 20px;
-    font-size: 30px;
-    transition: all ease-in .1ss;
+    font-size: 25px;
+    transition: all ease-in .15s;
+    line-height: 100px;
 }
 
 .bloque-listado:hover{
