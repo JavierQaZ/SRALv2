@@ -66,21 +66,26 @@ function VisualizacionDatos() {
                 <div className="d-flex flex-column">
                     <form onSubmit={handleSubmit}>
                         <div className='d-flex justify'>
-                            <label className='form-label mt-3'>Mes
+                            <label className='form-label mt-3 me-2'>Mes
                                 <input type="text" className='form-control'
                                     value={mes}
                                     onChange={handleOnChangeMes}
-                                    placeholder='Ingrese el Mes (1 al 12)'>
+                                    placeholder='Ingrese el Mes (1 al 12)'
+                                    min='1'
+                                    max='12'>
                                 </input>
                             </label>
-                            <label className='form-label mt-3'>Año
+                            <label className='form-label mt-3 me-2'>Año
                                 <input type="text" className='form-control'
                                     value={anio}
                                     onChange={handleOnChangeAnio}
                                     placeholder='Ingrese año (XXXX)'>
                                 </input>
                             </label>
-                            <button type="submit" className="btn btn-warning ms-4 mt-3 text-white">
+                            <button
+                                type="submit"
+                                className="btn ms-4 mt-3"
+                                style={{ backgroundColor: '#121113', color: '#ffffff'}}>
                                 Aceptar
                             </button>
                         </div>

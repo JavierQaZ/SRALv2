@@ -13,7 +13,6 @@ function Empleado() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        
         axios.delete(`http://localhost:5000/empleados/delete`,{data:{rut_empleado:rut}})
             .then((response) => {
             setExitoBorrarEmpleado("Empleado borrado exitosamente")
@@ -46,7 +45,10 @@ function Empleado() {
                         />
                     </label>
                 </div>
-                <button type="submit" className="btn btn-warning ms-4 mt-3 text-white">
+                <button
+                    type="submit"
+                    className="btn ms-4 mt-3"
+                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
                     Borrar Empleado
                 </button>
                 <br/>

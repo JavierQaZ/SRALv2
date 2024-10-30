@@ -120,7 +120,10 @@ function Empleado() {
                     </label>
                 </div>
 
-                <button type="submit" className="btn btn-warning ms-4 mt-3 text-white">
+                <button
+                    type="submit"
+                    className="btn ms-4 mt-3"
+                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
                     Registrar Empleado
                 </button>
                 <br/>
