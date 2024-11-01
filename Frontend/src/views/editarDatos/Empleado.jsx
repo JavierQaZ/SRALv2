@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
+import Alert from '@mui/material/Alert'
 
 function Empleado() {
     const [rut, setRut] = useState("")
@@ -8,6 +9,7 @@ function Empleado() {
     const [rol, setRol] = useState("-1")
     const [exitoEditarEmpleado, setExitoEditarEmpleado] = useState("")
     const [roles, setRoles] = useState([])
+    const [alertType, setAlertType] = useState("success")
 
     useEffect(() => {
         axios.get('http://localhost:5000/rol/get')
@@ -42,6 +44,7 @@ function Empleado() {
         e.preventDefault();
 
         if (rut === "" || nombre === "" || apellidos === "" || rol === "-1") {
+            setAlertType("warning")
             setExitoEditarEmpleado("Todos los campos son obligatorios")
             return;
         }
@@ -55,21 +58,30 @@ function Empleado() {
 
         axios.put('http://localhost:5000/empleados/edit', editarEmpleado)
             .then((response) => {
+                setAlertType("success")
                 setExitoEditarEmpleado("Datos editados exitosamente")
                 console.log("Datos del empleado editados exitosamente", response.data)
             })
             .catch ((error) => {
+                setAlertType("error")
                 setExitoEditarEmpleado("Error al editar el empleado")
                 console.error("Error al editar los datos del empleado: ", error)
             });
     }
 
+    useEffect(() => {
+        if (exitoEditarEmpleado){
+            const timer = setTimeout(() => {
+                setExitoEditarEmpleado(null);
+                setAlertType("success");
+            }, 7000);
+            return () => clearTimeout(timer);
+        }
+    }, [exitoEditarEmpleado]);
+
     const ping = exitoEditarEmpleado ? (
         <div className='mt-3'>
-            <p>
-                {exitoEditarEmpleado}: <br/>
-                {nombre} {apellidos}
-            </p>
+            <Alert severity={alertType}>{exitoEditarEmpleado}</Alert>
         </div>
     ): null;
 

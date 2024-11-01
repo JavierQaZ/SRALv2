@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Alert from '@mui/material/Alert'
+import  "../styles/SideAlert.css"
 
 function VisualizacionDatos() {
     const [datos, setDatos] = useState([]);
     const [mes, setMes] = useState("");
     const [anio, setAnio] = useState("");
     const [exitoFecha, setExitoFecha] = useState("");
+    const [alertType, setAlertType] = useState("success")
 
     useEffect(() => {
         obtenerKpi();
@@ -38,6 +41,7 @@ function VisualizacionDatos() {
         e.preventDefault();
 
         if (mes === "" || anio === "") {
+            setAlertType("warning")
             setExitoFecha("Todos los campos son obligatorios");
             return;
         }
@@ -46,18 +50,39 @@ function VisualizacionDatos() {
             .then((response) => {
                 if (response.data && response.data.datos) {
                     setDatos(response.data.datos);
+                    setAlertType("success")
                     setExitoFecha("Fecha enviada");
                 } else {
                     setDatos([]);
+                    setAlertType("warning")
                     setExitoFecha("Error al obtener datos");
                     console.error('La respuesta de KPIs no es un array:', response.data);
                 }
             })
             .catch((error) => {
-                setExitoFecha("Error al enviar fecha");
+                setAlertType("error")
+                setExitoFecha("Error al enviar fecha" );
                 console.log("Error al enviar fecha", error);
             });
     };
+
+    useEffect(() => {
+        if (exitoFecha){
+            const timer = setTimeout(() => {
+                setExitoFecha(null);
+                setAlertType("success");
+            }, 7000);
+            return () => clearTimeout(timer);
+        }
+    }, [exitoFecha]);
+
+    const ping = exitoFecha ? (
+        <div className='mt-3 ms-4 sidealert'>
+            <Alert severity={alertType}>
+                {exitoFecha}
+            </Alert>
+        </div>
+    ): null;
 
     return (
         <>
@@ -65,7 +90,7 @@ function VisualizacionDatos() {
             <div className="content-body">
                 <div className="d-flex flex-column">
                     <form onSubmit={handleSubmit}>
-                        <div className='d-flex justify'>
+                        <div className='d-flex justify align-items-center'>
                             <label className='form-label mt-3 me-2'>Mes
                                 <input type="text" className='form-control'
                                     value={mes}
@@ -88,9 +113,10 @@ function VisualizacionDatos() {
                                 style={{ backgroundColor: '#121113', color: '#ffffff'}}>
                                 Aceptar
                             </button>
+                            {ping}
                         </div>
                     </form>
-                    <p>{exitoFecha}</p>
+                    <hr/>
                     <table>
                         <thead>
                             <tr>

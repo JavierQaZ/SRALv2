@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
+import Alert from '@mui/material/Alert'
 
 function Roles() {
 
     const [nombreRol, setNombreRol] = useState("")
     const [salarioRol, setSalarioRol] = useState("")
     const [exitoRegistrarRol, setExitoRegistrarRol] = useState("")
+    const [alertType, setAlertType] = useState("success")
 
     const handleOnChangeNombreRol = (e) => {
         console.log(e.target.value)
@@ -19,6 +21,13 @@ function Roles() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (nombreRol === "" || salarioRol === ""){
+            setAlertType("warning")
+            setExitoRegistrarRol("Todos los campos son obligatorios")
+            return;
+        }
+
         const nuevoRol = {
             "nombre_rol": nombreRol,
             "sueldoPorHora_rol": parseFloat(salarioRol)
@@ -26,21 +35,30 @@ function Roles() {
 
         axios.post('http://localhost:5000/rol/add', nuevoRol)
             .then((response) => {
+                setAlertType("success")
                 setExitoRegistrarRol("Rol registrado exitosamente")
                 console.log("Rol registrado exitosamente", response.data)
             })
             .catch ((error) => {
+                setAlertType("error")
                 setExitoRegistrarRol("Error al registrar el rol")
                 console.error("Error al registrar el rol: ", error)
             });
     }
 
+    useEffect(() => {
+        if (exitoRegistrarRol){
+            const timer = setTimeout(() => {
+                setExitoRegistrarRol(null);
+                setAlertType("success");
+            }, 7000);
+            return () => clearTimeout(timer);
+        }
+    }, [exitoRegistrarRol]);
+
     const ping = exitoRegistrarRol ? (
         <div className='mt-3'>
-            <p>
-                {exitoRegistrarRol}: <br/>
-                {nombreRol}
-            </p>
+            <Alert severity={alertType}>{exitoRegistrarRol}</Alert>
         </div>
     ): null;
 

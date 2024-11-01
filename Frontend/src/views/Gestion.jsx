@@ -1,12 +1,19 @@
+//ELIMINAR ESTE COMENTARIO CUANDO ESTÉ RE-HECHO
+//se debe re-estructurar la lógica, además de las alertas.
+//Asimilarlo a VisualizacionDatos
+//Coordinar con Backend
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Alert from '@mui/material/Alert'
+import "../styles/SideAlert.css"
 
 function Gestion() {
-
     const [datos, setDatos] = useState({});
     const [mes, setMes] = useState("");
     const [anio, setAnio] = useState("");
     const [exitoFecha, setExitoFecha] = useState("");
+    const [alertType, setAlertType] = useState("success")
 
     useEffect(() => {
         obtenerDatos();
@@ -34,6 +41,7 @@ function Gestion() {
         e.preventDefault();
 
         if (mes === "" || anio === ""){
+            setAlertType("warning")
             setExitoFecha("Todos los campos son obligatorios");
             return;
         }
@@ -41,13 +49,31 @@ function Gestion() {
         obtenerDatos();
     };
 
+    useEffect(() => {
+        if (exitoFecha){
+            const timer = setTimeout(() => {
+                setExitoFecha(null);
+                setAlertType("success");
+            }, 7000);
+            return () => clearTimeout(timer);
+        }
+    }, [exitoFecha]);
+
+    const ping = exitoFecha ? (
+        <div className='mt-3 ms-4 sidealert'>
+            <Alert severity={alertType}>
+                {exitoFecha}
+            </Alert>
+        </div>
+    ): null;
+
     return (
         <>
             <h4 className="bg-payne-grey content-title shadow">GESTIÓN</h4>
             <div className="content-body">
                 <div className="d-flex flex-column">
                     <form onSubmit={handleSubmit}>
-                        <div className='d-flex justify'>
+                        <div className='d-flex justify align-items-center'>
                             <label className='form-label mt-3 me-2'>Mes
                                 <input type="text" className='form-control'
                                     value={mes}
@@ -70,9 +96,10 @@ function Gestion() {
                                 style={{ backgroundColor: '#121113', color: '#ffffff'}}>
                                 Aceptar
                             </button>
+                            {ping}
                         </div>
                     </form>
-                    <p>{exitoFecha}</p>
+                    <hr/>
                     <table>
                         <thead>
                             <tr>

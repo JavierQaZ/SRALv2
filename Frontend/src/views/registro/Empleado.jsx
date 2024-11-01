@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
+import Alert from '@mui/material/Alert'
 
 function Empleado() {
 
@@ -9,6 +10,7 @@ function Empleado() {
     const [rol, setRol] = useState("-1")
     const [exitoRegistrarEmpleado, setExitoRegistrarEmpleado] = useState("")
     const [roles, setRoles] = useState([])
+    const [alertType, setAlertType] = useState("success")
 
     useEffect(() => {
         axios.get('http://localhost:5000/rol/get')
@@ -43,6 +45,7 @@ function Empleado() {
         e.preventDefault();
 
         if (rut === "" || nombre === "" || apellidos === "" || rol === "-1") {
+            setAlertType("warning")
             setExitoRegistrarEmpleado("Todos los campos son obligatorios")
             return;
         }
@@ -56,21 +59,30 @@ function Empleado() {
 
         axios.post('http://localhost:5000/empleados/add', nuevoEmpleado)
             .then((response) => {
+                setAlertType("success")
                 setExitoRegistrarEmpleado("Empleado registrado exitosamente")
                 console.log("Empleado registrado exitosamente", response.data)
             })
             .catch ((error) => {
+                setAlertType("error")
                 setExitoRegistrarEmpleado("Error al registrar el empleado")
                 console.error("Error al registrar el empleado: ", error)
             });
     }
 
+    useEffect(() => {
+        if (exitoRegistrarEmpleado){
+            const timer = setTimeout(() => {
+                setExitoRegistrarEmpleado(null);
+                setAlertType("success");
+            }, 7000);
+            return () => clearTimeout(timer);
+        }
+    }, [exitoRegistrarEmpleado]);
+
     const ping = exitoRegistrarEmpleado ? (
         <div className='mt-3'>
-            <p>
-                {exitoRegistrarEmpleado}: <br/>
-                {nombre} {apellidos}
-            </p>
+            <Alert severity={alertType}>{exitoRegistrarEmpleado}</Alert>
         </div>
     ): null;
 

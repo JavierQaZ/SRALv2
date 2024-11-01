@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Alert from '@mui/material/Alert'
 
 function Roles() {
 
@@ -7,6 +8,7 @@ function Roles() {
     const [roles, setRoles] = useState([])
     const [salarioRol, setSalarioRol] = useState("")
     const [exitoEditarRol, setExitoEditarRol] = useState("")
+    const [alertType, setAlertType] = useState("success")
 
     useEffect(() => {
         axios.get('http://localhost:5000/rol/get')
@@ -30,6 +32,13 @@ function Roles() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (codigoRol === "-1" || salarioRol === ""){
+            setAlertType("warning")
+            setExitoEditarRol("Todos los campos son obligatorios")
+            return;
+        }
+
         const editarRol = {
             "codigo_rol": codigoRol,
             "sueldoPorHora_rol": parseFloat(salarioRol)
@@ -37,21 +46,30 @@ function Roles() {
 
         axios.put('http://localhost:5000/rol/edit', editarRol)
             .then((response) => {
+                setAlertType("success")
                 setExitoEditarRol("Rol editado exitosamente")
                 console.log("Rol editado exitosamente", response.data)
             })
             .catch ((error) => {
+                setAlertType("error")
                 setExitoEditarRol("Error al editar el rol")
                 console.error("Error al editar el rol: ", error)
             });
     }
 
+    useEffect(() => {
+        if (exitoEditarRol){
+            const timer = setTimeout(() => {
+                setExitoEditarRol(null);
+                setAlertType("success");
+            }, 7000);
+            return () => clearTimeout(timer);
+        }
+    }, [exitoEditarRol]);
+
     const ping = exitoEditarRol ? (
         <div className='mt-3'>
-            <p>
-                {exitoEditarRol}: <br/>
-                {codigoRol}
-            </p>
+            <Alert severity={alertType}>{exitoEditarRol}</Alert>
         </div>
     ): null;
 
@@ -71,6 +89,7 @@ function Roles() {
                             onChange={handleOnChangeCodigoRol}
                         >
                             <option value='-1'>Seleccione el Rol</option>
+                            <option>xd</option>
                             {roles.map((rol) => (
                                 <option key={rol.codigo_rol} value={rol.codigo_rol}>{rol.nombre_rol}</option>
                             ))}
