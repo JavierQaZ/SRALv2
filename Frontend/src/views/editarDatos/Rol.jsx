@@ -95,7 +95,6 @@ function Roles() {
                             onChange={handleOnChangeCodigoRol}
                         >
                             <option value='-1'>Seleccione el Rol</option>
-                            <option>xd</option>
                             {roles.map((rol) => (
                                 <option key={rol.codigo_rol} value={rol.codigo_rol}>{rol.nombre_rol}</option>
                             ))}
