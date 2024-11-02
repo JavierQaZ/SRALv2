@@ -1,9 +1,11 @@
 import React, {useState} from "react";
 import {Button} from "react-bootstrap";
 import { Navigate, useNavigate, Link} from "react-router-dom";
-import auth from "../context/auth.jsx"
-import "../styles/Login.css";
 import { Card, CardHeader, CardTitle, CardFooter } from "react-bootstrap";
+
+import "../styles/Login.css";
+
+import auth from "../context/auth.jsx"
 
 function Login() {
     const [rut, setRut] = useState("");
@@ -72,12 +74,17 @@ function Login() {
                             required
                         />
                     </div>
-                    <Button className="button" type="submit">Iniciar Sesión</Button>
-
-                    <Button className="button-signup">Registrarse</Button>
+                    <Button className="button" onClick={handleClick}>
+                        Iniciar Sesión
+                    </Button>
                 </form>
+                <Link to="/signup">
+                        <Button className="button-signup w-full">
+                            Registrarse
+                        </Button>
+                    </Link>
                 <CardFooter className="card-footer">
-                    <Link href="/forgot-password" className="text-sm text-center text-blue-500 hover:underline">
+                    <Link to="/recover" className="text-sm text-center text-blue-500 hover:underline">
                     ¿Olvidó su Contraseña?
                     </Link>
                 </CardFooter>
