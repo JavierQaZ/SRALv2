@@ -62,11 +62,21 @@ function Empleado() {
                 setAlertType("success")
                 setExitoRegistrarEmpleado("Empleado registrado exitosamente")
                 console.log("Empleado registrado exitosamente", response.data)
+
+                setRut("");
+                setNombre("");
+                setApellidos("");
+                setRol("-1");
             })
             .catch ((error) => {
                 setAlertType("error")
                 setExitoRegistrarEmpleado("Error al registrar el empleado")
                 console.error("Error al registrar el empleado: ", error)
+
+                setRut("");
+                setNombre("");
+                setApellidos("");
+                setRol("-1");
             });
     }
 

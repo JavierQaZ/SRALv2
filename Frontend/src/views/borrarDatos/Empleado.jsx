@@ -26,11 +26,15 @@ function Empleado() {
             setAlertType("success")
             setExitoBorrarEmpleado("Empleado borrado exitosamente")
             console.log("Empleado borrado exitosamente", response.data)
+
+            setRut("")
             })
         .catch ((error) => {
             setAlertType("error")
             setExitoBorrarEmpleado("Error al borrar el Empleado")
             console.error("Error al borrar el Empleado", error)
+
+            setRut("")
         });
     }
     useEffect(() => {

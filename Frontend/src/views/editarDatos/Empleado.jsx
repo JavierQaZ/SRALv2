@@ -61,11 +61,21 @@ function Empleado() {
                 setAlertType("success")
                 setExitoEditarEmpleado("Datos editados exitosamente")
                 console.log("Datos del empleado editados exitosamente", response.data)
+
+                setRut("");
+                setNombre("");
+                setApellidos("");
+                setRol("-1");
             })
             .catch ((error) => {
                 setAlertType("error")
                 setExitoEditarEmpleado("Error al editar el empleado")
                 console.error("Error al editar los datos del empleado: ", error)
+
+                setRut("");
+                setNombre("");
+                setApellidos("");
+                setRol("-1");
             });
     }
 

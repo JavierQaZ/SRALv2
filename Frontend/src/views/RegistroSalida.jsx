@@ -8,6 +8,8 @@ function RegistroSalida() {
     const [currentDateTime, setCurrentDateTime] = useState(null);
     const [exitoRegistroSalida, setExitoRegistroSalida] = useState("")
     const [alertType, setAlertType] = useState("success")
+    const [returnRUT, setReturnRUT] = useState("")
+    const [returnHora, setReturnHora] = useState("")
 
     const handleOnChangeRut = (e) => {
         console.log(e.target.value)
@@ -24,18 +26,21 @@ function RegistroSalida() {
         handleCaptureTime();
         const registroRutSalida = {
             "rut_empleado":  rut,
-            "horaIngreso_registro": currentDateTime
+            "horaSalida_registro": currentDateTime
         }
 
         axios.post('http://localhost:5000/r_salida/add', registroRutSalida)
             .then((response) => {
                 setExitoRegistroSalida("Registro de salida exitoso")
                 setAlertType("success")
+                setReturnRUT(response.data.rut_empleado)
+                setReturnHora(response.data.horaSalida_registro)
                 console.log("Registro de salida exitoso", response.data)
             })
             .catch ((error) => {
                 setExitoRegistroSalida("Error al registrar la salida")
                 setAlertType("error")
+                setRut("")
                 console.error("Error al registrar la salida: ", error)
         });
     }
@@ -53,7 +58,7 @@ function RegistroSalida() {
     const ping = exitoRegistroSalida ? (
         <div className='mt-3'>
             <Alert severity={alertType}>{exitoRegistroSalida}: <br/>
-            {rut} a las {currentDateTime}</Alert>
+            {returnRUT} a las {returnHora}</Alert>
         </div>
     ): null;
 

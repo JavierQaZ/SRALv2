@@ -49,11 +49,17 @@ function Roles() {
                 setAlertType("success")
                 setExitoEditarRol("Rol editado exitosamente")
                 console.log("Rol editado exitosamente", response.data)
+
+                setNombreRol("")
+                setSalarioRol("")
             })
             .catch ((error) => {
                 setAlertType("error")
                 setExitoEditarRol("Error al editar el rol")
                 console.error("Error al editar el rol: ", error)
+
+                setNombreRol("")
+                setSalarioRol("")
             });
     }
 

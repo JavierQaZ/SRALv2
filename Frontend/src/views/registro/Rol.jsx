@@ -38,11 +38,17 @@ function Roles() {
                 setAlertType("success")
                 setExitoRegistrarRol("Rol registrado exitosamente")
                 console.log("Rol registrado exitosamente", response.data)
+
+                setNombreRol("")
+                setSalarioRol("")
             })
             .catch ((error) => {
                 setAlertType("error")
                 setExitoRegistrarRol("Error al registrar el rol")
                 console.error("Error al registrar el rol: ", error)
+
+                setNombreRol("")
+                setSalarioRol("")
             });
     }
 

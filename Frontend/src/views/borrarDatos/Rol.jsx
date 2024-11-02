@@ -36,6 +36,9 @@ function Roles() {
                 setAlertType("success")
                 setExitoBorrarRol("Rol borrado exitosamente");
                 console.log("Rol borrado exitosamente", response.data);
+
+                setRol("-1")
+
                 // Actualizar la lista de roles después de borrar
                 axios.get('http://localhost:5000/rol/get')
                     .then((response) => {
@@ -49,6 +52,8 @@ function Roles() {
                 setAlertType("error")
                 setExitoBorrarRol("Error al borrar el Rol");
                 console.error("Error al borrar el Rol", error);
+
+                setRol("-1")
             });
     }
 

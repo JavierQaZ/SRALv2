@@ -8,6 +8,8 @@ function RegistroInicio() {
     const [currentDateTime, setCurrentDateTime] = useState(null);
     const [exitoRegistroInicio, setExitoRegistroInicio] = useState("")
     const [alertType, setAlertType] = useState("success")
+    const [returnRUT, setReturnRUT] = useState("")
+    const [returnHora, setReturnHora] = useState("")
 
     const handleOnChangeRut = (e) => {
         console.log(e.target.value)
@@ -24,7 +26,7 @@ function RegistroInicio() {
         handleCaptureTime();
         const registroRutInicio = {
             "rut_empleado":  rut,
-            "horaSalida_registro": currentDateTime
+            "horaIngreso_registro": currentDateTime
 
         }
 
@@ -32,11 +34,15 @@ function RegistroInicio() {
             .then((response) => {
                 setExitoRegistroInicio("Registro de Inicio exitoso")
                 setAlertType("success");
+                setReturnRUT(response.data.rut_empleado)
+                setReturnHora(response.data.horaInicio_registro)
+                setRut("")
                 console.log("Registro del Inicio exitoso", response.data)
             })
             .catch ((error) => {
                 setExitoRegistroInicio("Error al registrar el Inicio")
                 setAlertType("error")
+                setRut("")
                 console.error("Error al registrar el Inicio: ", error)
             });
     }
@@ -54,7 +60,7 @@ function RegistroInicio() {
     const ping = exitoRegistroInicio ? (
         <div className='mt-3'>
             <Alert severity={alertType}>{exitoRegistroInicio}: <br/>
-            {rut} a las {currentDateTime}</Alert>
+            {returnRUT} a las {returnHora}</Alert>
         </div>
     ): null;
 
