@@ -46,6 +46,11 @@ function VisualizacionDatos() {
             return;
         }
 
+        if ( mes < 1 || mes > 12){
+            setAlertType("warning")
+            setExitoFecha("El mes debe ser entre 1 y 12")
+        }
+
         axios.get(`http://localhost:5000/empleados/kpi?mes=${mes}&anio=${anio}`)
             .then((response) => {
                 if (response.data && response.data.datos) {

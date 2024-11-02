@@ -46,6 +46,11 @@ function Gestion() {
             return;
         }
 
+        if ( mes < 1 || mes > 12){
+            setAlertType("warning")
+            setExitoFecha("El mes debe ser entre 1 y 12")
+        }
+
         obtenerDatos();
     };
 
