@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../assets/Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+*{
+    padding: 0px;
+    margin: 0px;
+}
+
+body{
+    background-color: #FAF9F9;
+    font-family: 'Poppins', sans-serif;
+}
+
+.bg-payne-grey{
+    background-color: #555B6E;
+    color: #FAF9F9;
+}
