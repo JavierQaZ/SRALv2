@@ -1,8 +1,12 @@
 import React from "react";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
+
+import iconSettings from "../assets/settings.svg"
+import iconLogout from "../assets/logout.svg"
 
 import "../styles/Sidebar.css";
 import "../styles/Content.css";
+
 
 import RegistroInicio from "./RegistroInicio.jsx";
 import RegistroSalida from "./RegistroSalida.jsx";
@@ -11,6 +15,8 @@ import Registro from "./Registro.jsx";
 import Gestion from "./Gestion.jsx";
 import EditarDatos from "./EditarDatos.jsx";
 import BorrarDatos from "./BorrarDatos.jsx";
+import Informes from "./Informes.jsx";
+import Configuraciones from "./Configuraciones.jsx";
 
 function Home(){
     return(
@@ -22,7 +28,7 @@ function Home(){
                             <div className="row main">
                                 <Link to=""className="d-inline-flex p-2 main-log" id="side-item-brand">
                                     <img
-                                        src="/vite.svg" /* reemplazar con ícono real */
+                                        src="/vite.svg"
                                         alt="logo"
                                         width="30px"
                                         height="30px"
@@ -36,14 +42,17 @@ function Home(){
                             <Link to="registroSalida" className="side-item">
                                 Registro Salida
                             </Link>
+                            <Link to="informes" className="side-item">
+                                Informes
+                            </Link>
                             <Link to="visualizacionDatos" className="side-item">
                                 Visualización
                             </Link>
-                            <Link to="registro" className="side-item">
-                                Registro
-                            </Link>
                             <Link to="gestion" className="side-item">
                                 Gestión
+                            </Link>
+                            <Link to="registro" className="side-item">
+                                Registro
                             </Link>
                             <Link to="editarDatos" className="side-item">
                                 Editar Datos
@@ -51,6 +60,25 @@ function Home(){
                             <Link to="borrarDatos" className="side-item">
                                 Borrar Datos
                             </Link>
+
+                            <div className="mt-auto d-flex flex-row row-auto m-1 row-sm-4 row-md-3 row-lg-3 row-xl-2 justify-content-between" id="bottom-sidebar-container">
+                                <Link to="configuraciones" className="bottom-side-item flex-grow-1 text-center">
+                                <img
+                                        src={iconSettings}
+                                        alt="Ajustes"
+                                        width="30px"
+                                        height="30px"
+                                    />
+                                </Link>
+                                <Link to="" className="bottom-side-item flex-grow-1 text-center">
+                                <img
+                                        src={iconLogout}
+                                        alt="Cerrar Sesión"
+                                        width="30px"
+                                        height="30px"
+                                    />
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
@@ -60,10 +88,12 @@ function Home(){
                             <Route path="/registroInicio" element={<RegistroInicio/>}></Route>
                             <Route path="/registroSalida" element={<RegistroSalida/>}></Route>
                             <Route path="/visualizacionDatos" element={<VisualizacionDatos/>}></Route>
-                            <Route path="/registro/*" element={<Registro/>}></Route>
                             <Route path="/gestion" element={<Gestion/>}></Route>
+                            <Route path="/informes" element={<Informes/>}></Route>
+                            <Route path="/registro/*" element={<Registro/>}></Route>
                             <Route path="/editarDatos/*" element={<EditarDatos/>}></Route>
                             <Route path="/borrarDatos/*" element={<BorrarDatos/>}></Route>
+                            <Route path="/configuraciones" element={<Configuraciones/>}></Route>
                         </Routes>
                     </main>
                 </div>
