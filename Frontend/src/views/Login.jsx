@@ -78,11 +78,6 @@ function Login() {
                         Iniciar Sesión
                     </Button>
                 </form>
-                <Link to="/signup">
-                        <Button className="button-signup w-full">
-                            Registrarse
-                        </Button>
-                    </Link>
                 <CardFooter className="card-footer">
                     <Link to="/recover" className="text-sm text-center text-blue-500 hover:underline">
                     ¿Olvidó su Contraseña?
