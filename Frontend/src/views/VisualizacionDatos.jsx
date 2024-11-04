@@ -8,6 +8,7 @@ function VisualizacionDatos() {
     const [mes, setMes] = useState("");
     const [anio, setAnio] = useState("");
     const [exitoFecha, setExitoFecha] = useState("");
+    const [showTable, setShowTable] = useState(false)
     const [alertType, setAlertType] = useState("success")
 
     useEffect(() => {
@@ -69,6 +70,7 @@ function VisualizacionDatos() {
                 setExitoFecha("Error al enviar fecha" );
                 console.log("Error al enviar fecha", error);
             });
+        setShowTable(true)
     };
 
     useEffect(() => {
@@ -122,36 +124,38 @@ function VisualizacionDatos() {
                         </div>
                     </form>
                     <hr/>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>RUT</th>
-                                <th>Nombre</th>
-                                <th>Apellidos</th>
-                                <th>Rol</th>
-                                <th>Horas Trabajadas</th>
-                                <th>Salario</th>
-                                <th>Puntualidad</th>
-                                <th>Tasa de Asistencia</th>
-                                <th>Retraso</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {datos.map((item, index) => (
-                                <tr key={index}>
-                                    <td>{item.rut_empleado}</td>
-                                    <td>{item.nombre_empleado}</td>
-                                    <td>{item.apellidos_empleado}</td>
-                                    <td>{item.rol}</td>
-                                    <td>{item.horas_trabajadas}</td>
-                                    <td>{item.sueldo_total}</td>
-                                    <td>{item.puntualidad_promedio}</td>
-                                    <td>{item.tasa_asistencia}</td>
-                                    <td>{item.indice_retraso}</td>
+                    {showTable && (
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th>RUT</th>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Rol</th>
+                                    <th>Horas Trabajadas</th>
+                                    <th>Salario</th>
+                                    <th>Puntualidad</th>
+                                    <th>Tasa de Asistencia</th>
+                                    <th>Retraso</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {datos.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{item.rut_empleado}</td>
+                                        <td>{item.nombre_empleado}</td>
+                                        <td>{item.apellidos_empleado}</td>
+                                        <td>{item.rol}</td>
+                                        <td>{item.horas_trabajadas}</td>
+                                        <td>{item.sueldo_total}</td>
+                                        <td>{item.puntualidad_promedio}</td>
+                                        <td>{item.tasa_asistencia}</td>
+                                        <td>{item.indice_retraso}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
         </>

@@ -5,17 +5,17 @@ import { Card, CardHeader, CardTitle, CardFooter } from "react-bootstrap";
 
 import "../styles/Login.css";
 
-import auth from "../context/auth.jsx"
+import auth from "../context/Auth.jsx"
 
 function Login() {
-    const [rut, setRut] = useState("");
-    const [contrasena, setContrasena] = useState("");
+    const [rutUser, setRutUser] = useState("");
+    const [pwUser, setPwUser] = useState("");
     const [exitoLogin, setExitoLogin] = useState("")
 
     const navigate = useNavigate();
 
     const handleClick = () => {
-        auth.login(rut, contrasena).then((userData) => {
+        auth.login(rutUser, pwUser).then((userData) => {
             try {
                 if (userData.success){
                     sessionStorage.setItem("auth", userData.token);
@@ -55,8 +55,8 @@ function Login() {
                             id="username"
                             type="text"
                             placeholder="Ingrese su Usuario"
-                            value={rut}
-                            onChange={(e) => setRut(e.target.value)}
+                            value={rutUser}
+                            onChange={(e) => setRutUser(e.target.value)}
                             required
                         />
 
@@ -69,8 +69,8 @@ function Login() {
                             id="password"
                             type="password"
                             placeholder="Ingrese su contraseña"
-                            value={contrasena}
-                            onChange={(e) => setContrasena(e.target.value)}
+                            value={pwUser}
+                            onChange={(e) => setPwUser(e.target.value)}
                             required
                         />
                     </div>

@@ -5,7 +5,7 @@ const Auth = {
     login: async (rutUser, pwUser) => {
         try {
             const userData = {
-                rut_empleado: rutUser,
+                rut_empresa: rutUser,
                 contrasena: pwUser
             };
 
