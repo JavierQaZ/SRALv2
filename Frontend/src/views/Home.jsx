@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate} from "react-router-dom";
 
 import iconSettings from "../assets/settings.svg"
 import iconLogout from "../assets/logout.svg"
@@ -19,6 +19,15 @@ import Informes from "./Informes.jsx";
 import Configuraciones from "./Configuraciones.jsx";
 
 function Home(){
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        navigate('/login')
+    }
+
     return(
         <div>
             <div className="container-fluid p-0 overflow-hidden">
@@ -70,7 +79,7 @@ function Home(){
                                         height="30px"
                                     />
                                 </Link>
-                                <Link to="" className="bottom-side-item flex-grow-1 text-center">
+                                <Link to="/login" onClick={handleLogout} className="bottom-side-item flex-grow-1 text-center">
                                 <img
                                         src={iconLogout}
                                         alt="Cerrar Sesión"
