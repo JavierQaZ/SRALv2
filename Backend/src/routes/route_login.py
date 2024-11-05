@@ -17,7 +17,7 @@ def user_login():
 
         token = login(rut_empleado, contrasena)
         if token:
-            return jsonify({"token": token}), 200
+            return jsonify({"success": True, "token": token}), 200
         else:
             return jsonify({"error": "Credenciales inválidas"}), 401
 
