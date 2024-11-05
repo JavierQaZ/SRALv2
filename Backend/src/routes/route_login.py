@@ -1,4 +1,3 @@
-# routes_login.py
 from flask import Blueprint, request, jsonify
 from ..service.login_service import login
 
@@ -19,7 +18,7 @@ def user_login():
         if token:
             return jsonify({"success": True, "token": token}), 200
         else:
-            return jsonify({"error": "Credenciales inválidas"}), 401
+            return jsonify({"success": False, "error": "Credenciales inválidas"}), 401
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"success": False, "error": str(e)}), 500
