@@ -2,9 +2,14 @@ import React from "react";
 
 function Informes(){
     return(
-        <div>
-            <p>Informes</p>
-        </div>
+        <>
+            <h4 className="bg-payne-grey content-title shadow">INFORMES</h4>
+            <div className='content-body'>
+                <div className='container'>
+                    
+                </div>
+            </div>
+        </>
     )
 }
 
