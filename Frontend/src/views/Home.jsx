@@ -23,8 +23,8 @@ function Home(){
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
+        localStorage.removeItem('auth');
+        sessionStorage.removeItem('auth');
         navigate('/login')
     }
 

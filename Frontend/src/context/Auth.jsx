@@ -9,7 +9,6 @@ const Auth = {
             };
 
             const resp = await axios.post("http://localhost:5000/login", userData);
-            
             // Verifica si resp.data tiene la propiedad success
             if (resp.data && resp.data.success) {
                 return resp.data;
