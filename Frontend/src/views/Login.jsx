@@ -59,7 +59,7 @@ function Login() {
     ): null;
 
     return (
-        localStorage.getItem("auth") ? (
+        (localStorage.getItem("auth") != undefined) ? (
             <Navigate to = "/home"/>
         ) : (
         <div className="flex">

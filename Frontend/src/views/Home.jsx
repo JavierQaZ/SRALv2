@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Link, useNavigate} from "react-router-dom";
+import { Routes, Route, Link, useNavigate, Navigate} from "react-router-dom";
 
 import iconSettings from "../assets/settings.svg"
 import iconLogout from "../assets/logout.svg"
@@ -29,6 +29,7 @@ function Home(){
     }
 
     return(
+        (localStorage.getItem("auth")!= undefined) ?
         <div>
             <div className="container-fluid p-0 overflow-hidden">
                 <div className="row">
@@ -107,7 +108,7 @@ function Home(){
                     </main>
                 </div>
             </div>
-        </div>
+        </div>: <Navigate to = "/login" />
     )
 }
 
