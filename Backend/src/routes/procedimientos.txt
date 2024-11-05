@@ -1,0 +1,931 @@
+-- =========================================
+--              Procedimientos ROL
+-- =========================================
+
+DELIMITER //
+
+CREATE PROCEDURE agregar_rol (
+    IN p_Nombre VARCHAR(100),
+    IN p_SueldoPorHora DECIMAL(10, 2)
+)
+BEGIN
+    INSERT INTO rol (Nombre, SueldoPorHora)
+    VALUES (p_Nombre, p_SueldoPorHora);
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE editar_rol (
+    IN p_Codigo INT,
+    IN p_Nombre VARCHAR(100),
+    IN p_SueldoPorHora DECIMAL(10, 2)
+)
+BEGIN
+    UPDATE rol
+    SET Nombre = p_Nombre,
+        SueldoPorHora = p_SueldoPorHora
+    WHERE Codigo = p_Codigo;
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE eliminar_rol (
+    IN p_Codigo INT
+)
+BEGIN
+    DELETE FROM rol
+    WHERE Codigo = p_Codigo;
+END //
+
+DELIMITER ;
+
+-- =========================================
+--            Procedimientos EMPLEADO
+-- =========================================
+
+DELIMITER //
+
+CREATE PROCEDURE agregar_empleado (
+    IN p_Rut VARCHAR(255),
+    IN p_Nombre VARCHAR(255),
+    IN p_Apellidos VARCHAR(255),
+    IN p_Cod_rol VARCHAR(255),
+    IN p_Total_horas INT,
+    IN p_Sueldo_total DECIMAL(10, 2)
+)
+BEGIN
+    INSERT INTO empleados (RUT, Nombre, Apellidos, CodigoRol, TotalHorasTrabajadas, SueldoTotal)
+    VALUES (p_Rut, p_Nombre, p_Apellidos, p_Cod_rol, p_Total_horas, p_Sueldo_total);
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE editar_empleado (
+    IN p_RUT VARCHAR(255),
+    IN p_Nombre VARCHAR(255),
+    IN p_Apellidos VARCHAR(255),
+    IN p_Cod_rol VARCHAR(255),
+    IN p_Total_horas INT,
+    IN p_Sueldo_total DECIMAL(10, 2)
+)
+BEGIN
+    UPDATE empleados
+    SET Nombre = p_Nombre,
+        Apellidos = p_Apellidos,
+        CodigoRol = p_Cod_rol,
+        TotalHorasTrabajadas = p_Total_horas,
+        SueldoTotal = p_Sueldo_total
+    WHERE RUT = p_RUT;
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE eliminar_empleado (
+    IN p_RUT VARCHAR(255)
+)
+BEGIN
+    DELETE FROM empleados
+    WHERE RUT = p_RUT;
+END //
+
+DELIMITER ;
+
+-- =========================================
+--          Procedimientos HORAENTRADA
+-- =========================================
+
+DELIMITER //
+
+CREATE PROCEDURE agregar_hora_ingreso (
+    IN p_HoraIngreso DATETIME,
+    IN p_RUT VARCHAR(15)
+)
+BEGIN
+    INSERT INTO registroentrada (HoraIngreso, RUT)
+    VALUES (p_HoraIngreso, p_RUT);
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE editar_hora_ingreso (
+    IN p_HoraIngreso DATETIME,
+    IN p_RUT VARCHAR(255)
+)
+BEGIN
+    UPDATE registroentrada
+    SET HoraIngreso = p_HoraIngreso
+    WHERE RUT = p_RUT;
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE eliminar_registroentrada (
+    IN p_HoraIngreso DATETIME,
+    IN p_RUT VARCHAR(255)
+)
+BEGIN
+    DELETE FROM registroentrada
+    WHERE HoraIngreso = p_HoraIngreso AND RUT = p_RUT;
+END //
+
+DELIMITER ;
+
+-- =========================================
+--           Procedimientos HORASALIDA
+-- =========================================
+
+DELIMITER //
+
+CREATE PROCEDURE agregar_hora_salida (
+    IN p_HoraSalida DATETIME,
+    IN p_RUT VARCHAR(15)
+)
+BEGIN
+    INSERT INTO registrosalida (HoraSalida, RUT)
+    VALUES (p_HoraSalida, p_RUT);
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE editar_hora_salida (
+    IN p_HoraSalida DATETIME,
+    IN p_RUT VARCHAR(255)
+)
+BEGIN
+    UPDATE registrosalida
+    SET HoraSalida = p_HoraSalida
+    WHERE RUT = p_RUT;
+END //
+
+DELIMITER //
+
+CREATE PROCEDURE eliminar_hora_salida (
+    IN p_HoraSalida DATETIME,
+    IN p_RUT VARCHAR(255)
+)
+BEGIN
+    DELETE FROM registrosalida
+    WHERE HoraSalida = p_HoraSalida AND RUT = p_RUT;
+END //
+
+DELIMITER ;
+
+
+-- =========================================
+--              Triggers
+-- =========================================
+
+DELIMITER //
+
+CREATE TRIGGER trigger_actualizar_horas_y_sueldo
+AFTER INSERT ON registrosalida
+FOR EACH ROW
+BEGIN
+    DECLARE entrada DATETIME;
+    DECLARE horas_trabajadas DECIMAL(10, 2);
+    DECLARE total_horas DECIMAL(10, 2);
+    DECLARE sueldo_por_hora DECIMAL(10, 2);
+
+    -- Obtener la hora de entrada del mismo día
+    SELECT HoraIngreso INTO entrada
+    FROM registroentrada
+    WHERE RUT = NEW.RUT
+    AND DATE(HoraIngreso) = DATE(NEW.HoraSalida)
+    LIMIT 1;
+
+    -- Calcular horas trabajadas del día
+    SET horas_trabajadas = TIMESTAMPDIFF(HOUR, entrada, NEW.HoraSalida);
+
+    -- Obtener el total de horas trabajadas actuales
+    SELECT TotalHorasTrabajadas INTO total_horas
+    FROM Empleados
+    WHERE RUT = NEW.RUT;
+
+    -- Actualizar el total de horas trabajadas
+    SET total_horas = total_horas + horas_trabajadas;
+    UPDATE Empleados
+    SET TotalHorasTrabajadas = total_horas
+    WHERE RUT = NEW.RUT;
+
+    -- Obtener el sueldo por hora del rol del empleado
+    SELECT SueldoPorHora INTO sueldo_por_hora
+    FROM Rol
+    WHERE Codigo = (SELECT CodigoRol FROM Empleados WHERE RUT = NEW.RUT);
+
+    -- Calcular y actualizar el sueldo total
+    UPDATE Empleados
+    SET SueldoTotal = total_horas * sueldo_por_hora
+    WHERE RUT = NEW.RUT;
+END //
+
+DELIMITER ;
+
+------------------------------------------------
+Porcedimiento de r_entrada con hora del sistema
+------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE agregar_hora_ingreso (
+    IN p_RUT VARCHAR(15)
+)
+BEGIN
+    DECLARE v_exists INT;
+
+    -- Verificar si ya existe un registro de entrada para el día actual
+    SELECT COUNT(*)
+    INTO v_exists
+    FROM registroentrada
+    WHERE RUT = p_RUT AND DATE(HoraIngreso) = CURDATE();
+
+    IF v_exists = 0 THEN
+        -- Insertar nueva hora de ingreso
+        INSERT INTO registroentrada (HoraIngreso, RUT)
+        VALUES (NOW(), p_RUT);
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ya existe un registro de ingreso para hoy';
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER trigger_actualizar_horas_y_sueldo
+AFTER INSERT ON registrosalida
+FOR EACH ROW
+BEGIN
+    DECLARE entrada DATETIME;
+    DECLARE horas_trabajadas DECIMAL(10, 2);
+    DECLARE total_horas DECIMAL(10, 2);
+    DECLARE sueldo_por_hora DECIMAL(10, 2);
+
+    -- Obtener la hora de entrada del mismo día
+    SELECT horaIngreso_registro INTO entrada
+    FROM registroentrada
+    WHERE rut_empleado = NEW.rut_empleado
+    AND DATE(horaIngreso_registro) = DATE(NEW.horaSalida_registro)
+    LIMIT 1;
+
+    -- Calcular horas trabajadas del día
+    SET horas_trabajadas = TIMESTAMPDIFF(HOUR, entrada, NEW.horaSalida_registro);
+
+    -- Obtener el total de horas trabajadas actuales
+    SELECT totalHorasTrabajadas_empleado INTO total_horas
+    FROM empleados
+    WHERE rut_empleado = NEW.rut_empleado;
+
+    -- Actualizar el total de horas trabajadas
+    SET total_horas = total_horas + horas_trabajadas;
+    UPDATE empleados
+    SET totalHorasTrabajadas_empleado = total_horas
+    WHERE rut_empleado = NEW.rut_empleado;
+
+    -- Obtener el sueldo por hora del rol del empleado
+    SELECT sueldoPorHora_rol INTO sueldo_por_hora
+    FROM rol
+    WHERE codigo_rol = (SELECT codigo_rol FROM empleados WHERE rut_empleado = NEW.rut_empleado);
+
+    -- Calcular y actualizar el sueldo total
+    UPDATE empleados
+    SET sueldoTotal_empleado = total_horas * sueldo_por_hora
+    WHERE rut_empleado = NEW.rut_empleado;
+END //
+
+DELIMITER ;
+
+
+---------------------------------------------------
+
+Trigger actualizados con los nuevos nombres
+
+---------------------------------------------------
+
+DELIMITER //
+
+CREATE TRIGGER trigger_actualizar_horas_y_sueldo
+AFTER INSERT ON registrosalida
+FOR EACH ROW
+BEGIN
+    DECLARE entrada DATETIME;
+    DECLARE horas_trabajadas DECIMAL(10, 2);
+    DECLARE total_horas DECIMAL(10, 2);
+    DECLARE sueldo_por_hora DECIMAL(10, 2);
+
+    -- Obtener la hora de entrada del mismo día
+    SELECT horaIngreso_registro INTO entrada
+    FROM registroentrada
+    WHERE rut_empleado = NEW.rut_empleado
+    AND DATE(horaIngreso_registro) = DATE(NEW.horaSalida_registro)
+    LIMIT 1;
+
+    -- Calcular horas trabajadas del día
+    SET horas_trabajadas = TIMESTAMPDIFF(HOUR, entrada, NEW.horaSalida_registro);
+
+    -- Obtener el total de horas trabajadas actuales
+    SELECT totalHorasTrabajadas_empleado INTO total_horas
+    FROM empleados
+    WHERE rut_empleado = NEW.rut_empleado;
+
+    -- Actualizar el total de horas trabajadas
+    SET total_horas = total_horas + horas_trabajadas;
+    UPDATE empleados
+    SET totalHorasTrabajadas_empleado = total_horas
+    WHERE rut_empleado = NEW.rut_empleado;
+
+    -- Obtener el sueldo por hora del rol del empleado
+    SELECT sueldoPorHora_rol INTO sueldo_por_hora
+    FROM rol
+    WHERE codigo_rol = (SELECT codigo_rol FROM empleados WHERE rut_empleado = NEW.rut_empleado);
+
+    -- Calcular y actualizar el sueldo total
+    UPDATE empleados
+    SET sueldoTotal_empleado = total_horas * sueldo_por_hora
+    WHERE rut_empleado = NEW.rut_empleado;
+END //
+
+DELIMITER ;
+
+--------------------------------------------------------------------------
+
+--------------------------------------------------------------------------
+DELIMITER //
+
+CREATE TRIGGER Incrementar_codigo_rol BEFORE INSERT ON rol
+FOR EACH ROW
+BEGIN
+    DECLARE max_codigo INT;
+
+    SELECT IFNULL(MAX(codigo_rol) + 1, 1) INTO max_codigo FROM rol;
+
+    SET NEW.codigo_rol := max_codigo;
+END//
+
+DELIMITER ;
+
+
+---------------------------------------------------------------------------
+Trigger para AFTER INSERT en registrosalida
+--------------------------------------------------------------------------
+
+DELIMITER $$
+
+CREATE TRIGGER actualizar_horas_sueldo_insert
+AFTER INSERT ON registrosalida
+FOR EACH ROW
+BEGIN
+    DECLARE horas_trabajadas DECIMAL(10,2);
+    DECLARE sueldo_hora DECIMAL(10,2);
+    DECLARE ultima_entrada DATETIME;
+
+    -- Obtener la última hora de entrada para el empleado
+    SELECT MAX(horaIngreso_registro)
+    INTO ultima_entrada
+    FROM registroentrada
+    WHERE rut_empleado = NEW.rut_empleado;
+
+    -- Calcular las horas trabajadas desde la última entrada hasta la nueva salida
+    IF ultima_entrada IS NOT NULL THEN
+        SET horas_trabajadas = TIME_TO_SEC(TIMEDIFF(NEW.horaSalida_registro, ultima_entrada)) / 3600;
+
+        -- Obtener el sueldo por hora del empleado
+        SELECT r.sueldoPorHora_rol
+        INTO sueldo_hora
+        FROM empleados e
+        JOIN rol r ON e.codigo_rol = r.codigo_rol
+        WHERE e.rut_empleado = NEW.rut_empleado;
+
+        -- Actualizar las horas trabajadas y el sueldo total del empleado
+        UPDATE empleados
+        SET totalHorasTrabajadas_empleado = totalHorasTrabajadas_empleado + horas_trabajadas,
+            sueldoTotal_empleado = sueldoTotal_empleado + (horas_trabajadas * sueldo_hora)
+        WHERE rut_empleado = NEW.rut_empleado;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+---------------------------------------------------------------------------------------------------
+Trigger para AFTER UPDATE en registrosalida
+---------------------------------------------------------------------------------------------------
+
+DELIMITER $$
+
+CREATE TRIGGER actualizar_horas_sueldo_update
+AFTER UPDATE ON registrosalida
+FOR EACH ROW
+BEGIN
+    DECLARE horas_trabajadas DECIMAL(10,2);
+    DECLARE sueldo_hora DECIMAL(10,2);
+    DECLARE ultima_entrada DATETIME;
+
+    -- Obtener la última hora de entrada para el empleado
+    SELECT MAX(horaIngreso_registro)
+    INTO ultima_entrada
+    FROM registroentrada
+    WHERE rut_empleado = NEW.rut_empleado;
+
+    -- Calcular las horas trabajadas desde la última entrada hasta la nueva salida
+    IF ultima_entrada IS NOT NULL THEN
+        SET horas_trabajadas = TIME_TO_SEC(TIMEDIFF(NEW.horaSalida_registro, ultima_entrada)) / 3600;
+
+        -- Obtener el sueldo por hora del empleado
+        SELECT r.sueldoPorHora_rol
+        INTO sueldo_hora
+        FROM empleados e
+        JOIN rol r ON e.codigo_rol = r.codigo_rol
+        WHERE e.rut_empleado = NEW.rut_empleado;
+
+        -- Actualizar las horas trabajadas y el sueldo total del empleado
+        UPDATE empleados
+        SET totalHorasTrabajadas_empleado = totalHorasTrabajadas_empleado + horas_trabajadas,
+            sueldoTotal_empleado = sueldoTotal_empleado + (horas_trabajadas * sueldo_hora)
+        WHERE rut_empleado = NEW.rut_empleado;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Procedimientos 30-06
+
+
+-----------------------------------------------------------------------
+
+
+DELIMITER //
+
+CREATE PROCEDURE calcular_costo_total_por_rol(IN mes INT, IN anio INT)
+BEGIN
+    -- Declaración de variables
+    DECLARE inicio_mes DATETIME;
+    DECLARE fin_mes DATETIME;
+    DECLARE costo_total DECIMAL(10, 2);
+    DECLARE horas_trabajadas DECIMAL(10, 2);
+
+    -- Calcular las fechas de inicio y fin del mes especificado
+    SET inicio_mes = STR_TO_DATE(CONCAT(anio, '-', LPAD(mes, 2, '0'), '-01'), '%Y-%m-%d');
+    SET fin_mes = LAST_DAY(inicio_mes);
+
+    -- Calcular el costo total por rol en el mes especificado
+    SELECT r.codigo_rol, r.nombre_rol, 
+           SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro) * r.sueldoPorHora_rol) AS costo_total,
+           SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro)) AS horas_trabajadas
+    FROM rol r
+    JOIN empleados emp ON emp.codigo_rol = r.codigo_rol
+    JOIN registroentrada e ON e.rut_empleado = emp.rut_empleado
+    JOIN registrosalida s ON s.rut_empleado = emp.rut_empleado AND DATE(e.horaIngreso_registro) = DATE(s.horaSalida_registro)
+    WHERE e.horaIngreso_registro BETWEEN inicio_mes AND fin_mes
+      AND s.horaSalida_registro BETWEEN inicio_mes AND fin_mes
+    GROUP BY r.codigo_rol, r.nombre_rol;
+
+    -- Devolver el resultado
+    SELECT r.codigo_rol, r.nombre_rol, horas_trabajadas, costo_total
+    FROM rol r
+    JOIN empleados emp ON emp.codigo_rol = r.codigo_rol
+    LEFT JOIN (
+        SELECT e.rut_empleado, 
+               SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro)) AS horas_trabajadas
+        FROM registroentrada e
+        JOIN registrosalida s ON e.rut_empleado = s.rut_empleado AND DATE(e.horaIngreso_registro) = DATE(s.horaSalida_registro)
+        WHERE MONTH(e.horaIngreso_registro) = mes AND YEAR(e.horaIngreso_registro) = anio
+        GROUP BY e.rut_empleado
+    ) AS horas_emp ON horas_emp.rut_empleado = emp.rut_empleado
+    LEFT JOIN (
+        SELECT e.rut_empleado, 
+               SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro) * r.sueldoPorHora_rol) AS costo_total
+        FROM registroentrada e
+        JOIN registrosalida s ON e.rut_empleado = s.rut_empleado AND DATE(e.horaIngreso_registro) = DATE(s.horaSalida_registro)
+        JOIN empleados emp ON emp.rut_empleado = e.rut_empleado
+        JOIN rol r ON emp.codigo_rol = r.codigo_rol
+        WHERE MONTH(e.horaIngreso_registro) = mes AND YEAR(e.horaIngreso_registro) = anio
+        GROUP BY e.rut_empleado
+    ) AS costo_emp ON costo_emp.rut_empleado = emp.rut_empleado
+    GROUP BY r.codigo_rol, r.nombre_rol;
+END //
+
+DELIMITER ;
+
+---------------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE PROCEDURE calcular_costo_total_por_mes(IN mes INT, IN anio INT)
+BEGIN
+    -- Declaración de variables
+    DECLARE inicio_mes DATETIME;
+    DECLARE fin_mes DATETIME;
+    DECLARE costo_total_sueldos DECIMAL(10, 2);
+    DECLARE horas_totales DECIMAL(10, 2);
+
+    -- Calcular las fechas de inicio y fin del mes especificado
+    SET inicio_mes = STR_TO_DATE(CONCAT(anio, '-', LPAD(mes, 2, '0'), '-01'), '%Y-%m-%d');
+    SET fin_mes = LAST_DAY(inicio_mes);
+
+    -- Calcular el costo total de sueldos y las horas totales en el mes especificado
+    SELECT COALESCE(SUM(horas_trabajadas * r.sueldoPorHora_rol), 0) AS costo_total_sueldos,
+           COALESCE(SUM(horas_trabajadas), 0) AS horas_totales
+    INTO costo_total_sueldos, horas_totales
+    FROM (
+        SELECT e.rut_empleado, SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro)) AS horas_trabajadas
+        FROM registroentrada e
+        JOIN registrosalida s ON e.rut_empleado = s.rut_empleado AND DATE(e.horaIngreso_registro) = DATE(s.horaSalida_registro)
+        WHERE MONTH(e.horaIngreso_registro) = mes AND YEAR(e.horaIngreso_registro) = anio
+        GROUP BY e.rut_empleado
+    ) AS horas_empleados
+    JOIN empleados emp ON emp.rut_empleado = horas_empleados.rut_empleado
+    JOIN rol r ON emp.codigo_rol = r.codigo_rol;
+
+    -- Devolver el resultado
+    SELECT costo_total_sueldos AS costo_total_sueldos_mes, horas_totales AS horas_totales_mes;
+END //
+
+DELIMITER ;
+
+
+----------------------------------------------------------------------------------------------
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE calcular_costo_por_hora_trabajada(IN mes INT, IN anio INT)
+BEGIN
+    -- Declaración de variables
+    DECLARE inicio_mes DATETIME;
+    DECLARE fin_mes DATETIME;
+    DECLARE total_horas_trabajadas DECIMAL(10, 2);
+    DECLARE costo_total_sueldos DECIMAL(10, 2);
+    DECLARE costo_por_hora DECIMAL(10, 2);
+
+    -- Calcular las fechas de inicio y fin del mes especificado
+    SET inicio_mes = STR_TO_DATE(CONCAT(anio, '-', mes, '-01'), '%Y-%m-%d');
+    SET fin_mes = LAST_DAY(inicio_mes);
+
+    -- Calcular el total de horas trabajadas en el mes especificado
+    SELECT SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro)) INTO total_horas_trabajadas
+    FROM registroentrada e
+    JOIN registrosalida s ON e.rut_empleado = s.rut_empleado
+    WHERE e.horaIngreso_registro BETWEEN inicio_mes AND fin_mes
+      AND s.horaSalida_registro BETWEEN inicio_mes AND fin_mes;
+
+    -- Calcular el costo total de sueldos en el mes especificado
+    SELECT SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro) * r.sueldoPorHora_rol) INTO costo_total_sueldos
+    FROM rol r
+    JOIN empleados emp ON emp.codigo_rol = r.codigo_rol
+    JOIN registroentrada e ON e.rut_empleado = emp.rut_empleado
+    JOIN registrosalida s ON s.rut_empleado = emp.rut_empleado
+    WHERE e.horaIngreso_registro BETWEEN inicio_mes AND fin_mes
+      AND s.horaSalida_registro BETWEEN inicio_mes AND fin_mes;
+
+    -- Calcular el costo promedio por hora trabajada
+    SET costo_por_hora = costo_total_sueldos / total_horas_trabajadas;
+
+    -- Devolver el resultado
+    SELECT costo_por_hora AS costo_promedio_por_hora_trabajada;
+END //
+
+DELIMITER ;
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE calcular_promedio_horas_trabajadas(IN mes INT, IN anio INT)
+BEGIN
+    -- Declaración de variables
+    DECLARE inicio_mes DATE;
+    DECLARE fin_mes DATE;
+    DECLARE total_horas_trabajadas DECIMAL(10, 2);
+    DECLARE numero_empleados INT;
+    DECLARE promedio_horas DECIMAL(10, 2);
+
+    -- Calcular las fechas de inicio y fin del mes especificado
+    SET inicio_mes = STR_TO_DATE(CONCAT(anio, '-', mes, '-01'), '%Y-%m-%d');
+    SET fin_mes = LAST_DAY(inicio_mes);
+
+    -- Calcular el total de horas trabajadas en el mes especificado
+    SELECT SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro)) INTO total_horas_trabajadas
+    FROM registroentrada e
+    JOIN registrosalida s ON e.rut_empleado = s.rut_empleado AND DATE(e.horaIngreso_registro) = DATE(s.horaSalida_registro)
+    WHERE e.horaIngreso_registro BETWEEN inicio_mes AND fin_mes
+      AND s.horaSalida_registro BETWEEN inicio_mes AND fin_mes;
+
+    -- Calcular el número de empleados únicos que trabajaron en el mes especificado
+    SELECT COUNT(DISTINCT e.rut_empleado) INTO numero_empleados
+    FROM registroentrada e
+    JOIN registrosalida s ON e.rut_empleado = s.rut_empleado
+    WHERE e.horaIngreso_registro BETWEEN inicio_mes AND fin_mes
+      AND s.horaSalida_registro BETWEEN inicio_mes AND fin_mes;
+
+    -- Calcular el promedio de horas trabajadas por empleado
+    SET promedio_horas = total_horas_trabajadas / numero_empleados;
+
+    -- Devolver el resultado
+    SELECT promedio_horas AS promedio_horas_trabajadas;
+END //
+
+DELIMITER ;
+
+
+
+
+Procedimientos 02-07-2024 Kpi por empleado
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `obtener_kpis_por_mes`(
+    IN p_mes INT,
+    IN p_anio INT
+)
+BEGIN
+    SELECT 
+        e.rut_empleado,
+        e.nombre_empleado,
+        e.apellidos_empleado,
+        r.nombre_rol AS rol,
+        p_mes AS mes,
+        p_anio AS anio,
+        COALESCE(sueldo_total, 0) AS sueldo_total,
+        COALESCE(horas_trabajadas, 0) AS horas_trabajadas,
+        COALESCE(puntualidad_promedio, 0) AS puntualidad_promedio,
+        COALESCE(tasa_asistencia, 0) AS tasa_asistencia,
+        COALESCE(indice_retraso, 0) AS indice_retraso
+    FROM empleados e
+    LEFT JOIN rol r ON e.codigo_rol = r.codigo_rol
+    LEFT JOIN (
+        SELECT 
+            rut_empleado,
+            SUM(total_horas * sueldo_hora) AS sueldo_total,
+            SUM(total_horas) AS horas_trabajadas
+        FROM (
+            SELECT 
+                e.rut_empleado,
+                TIMESTAMPDIFF(HOUR, re.horaIngreso_registro, rs.horaSalida_registro) AS total_horas,
+                COALESCE(r.sueldoPorHora_rol, 0) AS sueldo_hora
+            FROM registroentrada re
+            JOIN registrosalida rs ON re.rut_empleado = rs.rut_empleado 
+                                  AND DATE(re.horaIngreso_registro) = DATE(rs.horaSalida_registro)
+            JOIN empleados e ON re.rut_empleado = e.rut_empleado
+            LEFT JOIN rol r ON e.codigo_rol = r.codigo_rol
+            WHERE MONTH(re.horaIngreso_registro) = p_mes
+              AND YEAR(re.horaIngreso_registro) = p_anio
+              AND MONTH(rs.horaSalida_registro) = p_mes
+              AND YEAR(rs.horaSalida_registro) = p_anio
+        ) AS horas_sueldo
+        GROUP BY rut_empleado
+    ) AS sueldo ON e.rut_empleado = sueldo.rut_empleado
+    LEFT JOIN (
+        SELECT 
+            rut_empleado,
+            AVG(puntualidad_promedio) AS puntualidad_promedio
+        FROM (
+            SELECT 
+                e.rut_empleado,
+                IF(total_llegadas > 0, (puntual_llegadas / total_llegadas) * 100, 0) AS puntualidad_promedio
+            FROM registroentrada e
+            LEFT JOIN (
+                SELECT 
+                    rut_empleado,
+                    COUNT(*) AS total_llegadas,
+                    SUM(IF(TIMEDIFF(e.horaIngreso_registro, CAST(CONCAT(DATE(e.horaIngreso_registro), ' 08:00:00') AS DATETIME)) > '00:30:00', 1, 0)) AS puntual_llegadas
+                FROM registroentrada e
+                WHERE MONTH(e.horaIngreso_registro) = p_mes
+                  AND YEAR(e.horaIngreso_registro) = p_anio
+                GROUP BY e.rut_empleado
+            ) AS puntualidad ON e.rut_empleado = puntualidad.rut_empleado
+        ) AS puntualidad_promedio
+        GROUP BY rut_empleado
+    ) AS puntualidad ON e.rut_empleado = puntualidad.rut_empleado
+    LEFT JOIN (
+        SELECT 
+            rut_empleado,
+            COALESCE((COUNT(DISTINCT DATE(horaIngreso_registro)) / DAY(LAST_DAY(CONCAT(p_anio, '-', LPAD(p_mes, 2, '00'), '-01')))) * 100, 0) AS tasa_asistencia
+        FROM registroentrada
+        WHERE MONTH(horaIngreso_registro) = p_mes
+          AND YEAR(horaIngreso_registro) = p_anio
+        GROUP BY rut_empleado
+    ) AS asistencia ON e.rut_empleado = asistencia.rut_empleado
+    LEFT JOIN (
+        SELECT 
+            rut_empleado,
+            COALESCE((COUNT(*) / DAY(LAST_DAY(CONCAT(p_anio, '-', LPAD(p_mes, 2, '00'), '-01')))) * 100, 0) AS indice_retraso
+        FROM registroentrada
+        WHERE MONTH(horaIngreso_registro) = p_mes
+          AND YEAR(horaIngreso_registro) = p_anio
+          AND TIMEDIFF(horaIngreso_registro, CAST(CONCAT(DATE(horaIngreso_registro), ' 08:00:00') AS DATETIME)) > '00:30:00'
+        GROUP BY rut_empleado
+    ) AS retraso ON e.rut_empleado = retraso.rut_empleado;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calcular_tasa_asistencia`(
+    IN p_mes INT,
+    IN p_anio INT
+)
+BEGIN
+    CREATE TEMPORARY TABLE tmp_tasa_asistencia (
+        rut_empleado VARCHAR(15),
+        tasa_asistencia DECIMAL(5, 2)
+    );
+
+    INSERT INTO tmp_tasa_asistencia
+    SELECT e.rut_empleado,
+           (COUNT(DISTINCT DATE(horaIngreso_registro)) / DAY(LAST_DAY(CONCAT(p_anio, '-', LPAD(p_mes, 2, '00'), '-01')))) * 100
+    FROM registroentrada e
+    WHERE MONTH(horaIngreso_registro) = p_mes AND YEAR(horaIngreso_registro) = p_anio
+    GROUP BY e.rut_empleado;
+
+    SELECT * FROM tmp_tasa_asistencia;
+    DROP TEMPORARY TABLE tmp_tasa_asistencia;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calcular_sueldo_mensual`(
+    IN p_mes INT,
+    IN p_anio INT
+)
+BEGIN
+    CREATE TEMPORARY TABLE tmp_sueldo_mensual (
+        rut_empleado VARCHAR(15),
+        sueldo_mensual DECIMAL(10, 2)
+    );
+
+    INSERT INTO tmp_sueldo_mensual
+    SELECT e.rut_empleado,
+           COALESCE(SUM(TIMESTAMPDIFF(HOUR, r.horaIngreso_registro, s.horaSalida_registro)), 0) * r2.sueldoPorHora_rol
+    FROM empleados e
+    JOIN registroentrada r ON e.rut_empleado = r.rut_empleado
+    JOIN registrosalida s ON r.rut_empleado = s.rut_empleado AND DATE(r.horaIngreso_registro) = DATE(s.horaSalida_registro)
+    JOIN rol r2 ON e.codigo_rol = r2.codigo_rol
+    WHERE MONTH(r.horaIngreso_registro) = p_mes AND YEAR(r.horaIngreso_registro) = p_anio
+    GROUP BY e.rut_empleado;
+
+    SELECT * FROM tmp_sueldo_mensual;
+    DROP TEMPORARY TABLE tmp_sueldo_mensual;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calcular_puntualidad_promedio`(
+    IN p_mes INT,
+    IN p_anio INT
+)
+BEGIN
+    CREATE TEMPORARY TABLE tmp_puntualidad_promedio (
+        rut_empleado VARCHAR(15),
+        puntualidad_promedio DECIMAL(5, 2)
+    );
+
+    INSERT INTO tmp_puntualidad_promedio
+    SELECT e.rut_empleado,
+           (COUNT(*) / (SELECT COUNT(DISTINCT DATE(horaIngreso_registro))
+                        FROM registroentrada
+                        WHERE rut_empleado = e.rut_empleado AND MONTH(horaIngreso_registro) = p_mes AND YEAR(horaIngreso_registro) = p_anio)) * 100
+    FROM registroentrada e
+    WHERE MONTH(e.horaIngreso_registro) = p_mes AND YEAR(e.horaIngreso_registro) = p_anio
+    AND HOUR(e.horaIngreso_registro) = 8 AND MINUTE(e.horaIngreso_registro) BETWEEN 0 AND 15
+    GROUP BY e.rut_empleado;
+
+    SELECT * FROM tmp_puntualidad_promedio;
+    DROP TEMPORARY TABLE tmp_puntualidad_promedio;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calcular_indice_retraso`(
+    IN p_mes INT,
+    IN p_anio INT
+)
+BEGIN
+    CREATE TEMPORARY TABLE tmp_indice_retraso (
+        rut_empleado VARCHAR(15),
+        indice_retraso DECIMAL(5, 2)
+    );
+
+    INSERT INTO tmp_indice_retraso
+    SELECT e.rut_empleado,
+           (COUNT(*) / (SELECT COUNT(DISTINCT DATE(horaIngreso_registro))
+                        FROM registroentrada
+                        WHERE rut_empleado = e.rut_empleado AND MONTH(horaIngreso_registro) = p_mes AND YEAR(horaIngreso_registro) = p_anio)) * 100
+    FROM registroentrada e
+    WHERE MONTH(e.horaIngreso_registro) = p_mes AND YEAR(e.horaIngreso_registro) = p_anio
+    AND TIMEDIFF(horaIngreso_registro, CAST(CONCAT(DATE(horaIngreso_registro), ' 08:00:00') AS DATETIME)) > '00:30:00'
+    GROUP BY e.rut_empleado;
+
+    SELECT * FROM tmp_indice_retraso;
+    DROP TEMPORARY TABLE tmp_indice_retraso;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calcular_horas_trabajadas`(
+    IN p_mes INT,
+    IN p_anio INT
+)
+BEGIN
+    CREATE TEMPORARY TABLE tmp_horas_trabajadas (
+        rut_empleado VARCHAR(15),
+        horas_trabajadas DECIMAL(10, 2)
+    );
+
+    INSERT INTO tmp_horas_trabajadas
+    SELECT e.rut_empleado,
+           SUM(TIMESTAMPDIFF(HOUR, e.horaIngreso_registro, s.horaSalida_registro))
+    FROM registroentrada e
+    JOIN registrosalida s ON e.rut_empleado = s.rut_empleado AND DATE(e.horaIngreso_registro) = DATE(s.horaSalida_registro)
+    WHERE MONTH(e.horaIngreso_registro) = p_mes AND YEAR(e.horaIngreso_registro) = p_anio
+    GROUP BY e.rut_empleado;
+
+    SELECT * FROM tmp_horas_trabajadas;
+    DROP TEMPORARY TABLE tmp_horas_trabajadas;
+END$$
+DELIMITER ;
+
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `insertar_valores_predeterminados`(
+    IN p_rut_empleado VARCHAR(15),
+    IN p_mes INT,
+    IN p_anio INT
+)
+BEGIN
+    INSERT INTO kpi (rut_empleado, mes, anio, sueldo_total, tasa_asistencia, puntualidad_promedio,
+                    horas_trabajadas_mes, indice_retraso, costo_total_sueldos, costo_por_horas_trabajadas,
+                    promedio_horas_empleado, sueldo_mes, costo_total_mes)
+    VALUES (p_rut_empleado, p_mes, p_anio, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+END$$
+DELIMITER ;
+
+
+
+
+TRIGGER TABLA EMPLEADOS PARA INSERTAR EN TABLA USUARIOS
+
+DELIMITER //
+
+CREATE TRIGGER after_insert_empleado
+AFTER INSERT ON `empleados`
+FOR EACH ROW
+BEGIN
+    DECLARE isAdmin INT;
+
+    SELECT COUNT(*) INTO isAdmin
+    FROM rol
+    WHERE codigo_rol = NEW.codigo_rol AND nombre_rol = 'Administrador';
+
+    IF isAdmin = 1 THEN
+        INSERT INTO usuarios (rut_empleado, contrasena)
+        VALUES (NEW.rut_empleado, '1234');
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CalcularCostoHorasPorRol3`(
+    IN codigo_rol VARCHAR(100),
+    IN mesDeseado INT,
+    IN anioDeseado INT
+)
+BEGIN
+    -- Calcular el total de horas trabajadas y su costo, agrupando por rol
+    SELECT
+        SUM(TIMESTAMPDIFF(HOUR, re.horaIngreso_registro, rs.horaSalida_registro)) AS total_horas_trabajadas,
+        SUM(TIMESTAMPDIFF(HOUR, re.horaIngreso_registro, rs.horaSalida_registro)) * r.sueldoPorHora_rol AS costo_total
+    FROM
+        empleados e
+    JOIN
+        rol r ON e.codigo_rol = r.codigo_rol
+    JOIN
+        registroentrada re ON e.rut_empleado = re.rut_empleado
+    JOIN
+        registrosalida rs ON e.rut_empleado = rs.rut_empleado 
+        AND DATE(re.horaIngreso_registro) = DATE(rs.horaSalida_registro)
+    WHERE
+        r.codigo_rol = codigo_rol
+        AND MONTH(re.horaIngreso_registro) = mesDeseado
+        AND YEAR(re.horaIngreso_registro) = anioDeseado
+    GROUP BY r.codigo_rol;
+END$$
+DELIMITER ;
