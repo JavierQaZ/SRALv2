@@ -11,8 +11,7 @@ def create_app(Config):
     CORS(app, resources={"/rol/*": {"origins": "http://localhost:5000", "methods": ["POST", "PUT", "GET", "DELETE"]}})
     CORS(app, resources={"/r_entrada/*": {"origins": "http://localhost:5000", "methods": ["POST", "PUT", "GET", "DELETE"]}})
     CORS(app, resources={"/r_salida/*": {"origins": "http://localhost:5000", "methods": ["POST", "PUT", "GET", "DELETE"]}})
-    CORS(app, resources={"/kpi/*": {"origins": "http://localhost:5000", "methods": ["POST", "PUT", "GET", "DELETE"]}})
-
+ 
     app.register_blueprint(routes_empleados.bp, url_prefix="/empleados")
     app.register_blueprint(routes_rol.bp, url_prefix="/rol")
     app.register_blueprint(routes_r_entrada.bp, url_prefix="/r_entrada")
