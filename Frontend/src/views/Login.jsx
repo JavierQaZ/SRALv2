@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert'
 
 import "../styles/Login.css";
 
-import auth from "../context/Auth.jsx"
+import Auth from "../context/Auth.jsx"
 
 function Login() {
     const [rutUser, setRutUser] = useState("");
@@ -16,8 +16,10 @@ function Login() {
 
     const navigate = useNavigate();
 
-    const handleClick = () => {
-        auth.login(rutUser, pwUser).then((userData) => {
+    const handleClick = (e) => {
+        e.preventDefault();
+
+        Auth.login(rutUser, pwUser).then((userData) => {
             try {
                 if (userData.success){
                     localStorage.setItem("auth", userData.token);
@@ -57,7 +59,7 @@ function Login() {
     ): null;
 
     return (
-        (localStorage.getItem("auth") != undefined)? (
+        localStorage.getItem("auth") ? (
             <Navigate to = "/home"/>
         ) : (
         <div className="flex">
