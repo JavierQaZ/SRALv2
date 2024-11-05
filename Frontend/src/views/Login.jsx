@@ -20,7 +20,7 @@ function Login() {
         auth.login(rutUser, pwUser).then((userData) => {
             try {
                 if (userData.success){
-                    sessionStorage.setItem("auth", userData.token);
+                    localStorage.setItem("auth", userData.token);
                     navigate("/home")
                 }
                 else {
