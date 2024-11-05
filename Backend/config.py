@@ -5,8 +5,8 @@ class Config:
     # Configuración para MySQL usando Flask-MySQLdb
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'
-    MYSQL_PASSWORD = '1607'#Intentar mantener esta clave puede variar segun la maquina
-    MYSQL_DB = 'black_pumpkin'
+    MYSQL_PASSWORD = 'admin' #Intentar mantener esta clave puede variar segun la maquina
+    MYSQL_DB = 'sralv2'
 
 class DevelopmentConfig(Config):
     DEBUG = True
