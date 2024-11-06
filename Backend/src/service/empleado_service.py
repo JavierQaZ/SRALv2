@@ -61,27 +61,31 @@ def delete_empleado_service(rut_empleado):
         print("Error al eliminar empleado:", e)
         raise e
         
-def obtener_empleados_service():
+
+    
+def obtener_empleados():
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        
-        # Consulta para obtener todos los empleados
-        cursor.execute("SELECT rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol, totalHorasTrabajadas_empleado, sueldoTotal_empleado FROM empleados")
-        
-        # Obtener todos los registros
+
+        # Ejecutar la consulta SQL para obtener todos los empleados
+        cursor.execute("SELECT rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol FROM empleados")
+
+        # Obtener los resultados
         empleados = cursor.fetchall()
-        
+
         # Cerrar conexión y cursor
         cursor.close()
         connection.close()
-        
+
         return empleados
     
     except Exception as e:
+        # Manejar errores
         print("Error al obtener empleados:", e)
         return None
-    
+
+
 #{
 #    "rut_empleado": "1111111-8",
 #    "nombre_empleado": "perla",
