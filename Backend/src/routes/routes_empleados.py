@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
-from ..service.empleado_service import agregar_empleado_service,editar_empleado_service,delete_empleado_service, obtener_empleados_service
+from ..service.empleado_service import agregar_empleado_service,editar_empleado_service,delete_empleado_service, obtener_empleados
 from ..service.kpi_empleado_service import obtener_kpi_service
 bp = Blueprint('empleados_Blueprint', __name__)
 
@@ -80,31 +80,7 @@ def delete_empleado():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@bp.route('/get', methods=['GET'])
-@jwt_required()
-def obtener_empleados():
-    try:
-        empleados = obtener_empleados_service()
-        
-        if empleados is None:
-            return jsonify({"error": "No se pudieron obtener los empleados"}), 500
-        
-        # Formatear los empleados en una lista de diccionarios
-        empleados_list = []
-        for emp in empleados:
-            empleados_list.append({
-                'rut_empleado': emp[0],
-                'nombre_empleado': emp[1],
-                'apellidos_empleado': emp[2],
-                'codigo_rol': emp[3],
-                'totalHorasTrabajadas_empleado': emp[4],
-                'sueldoTotal_empleado': emp[5]
-            })
-        
-        return jsonify(empleados_list), 200
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+
     
 
 @bp.route('/kpi', methods=['GET'])
@@ -130,3 +106,19 @@ def obtener_kpi():
     except Exception as e:
         print(f"Error al obtener KPIs: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
+@bp.route('/get', methods=['GET'])
+@jwt_required()
+def get_empleados():
+    empleados = obtener_empleados()
+    if empleados:
+        empleados_list = [{
+            'rut_empleado': empleado[0],
+            'nombre_empleado': empleado[1],
+            'apellidos_empleado': empleado[2],
+            'codigo_rol': empleado[3]
+        } for empleado in empleados]
+        return jsonify(empleados_list), 200
+    else:
+        return jsonify({"error": "Error al obtener empleados"}), 500
