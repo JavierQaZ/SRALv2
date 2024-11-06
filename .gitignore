@@ -1,4 +1,3 @@
 __pycache__/
 *.py[cod]
-Frontend/node_modules/.vite/deps/
-Frontend/node_modules/.vite/deps/
+Frontend/node_modules/.vite/deps
