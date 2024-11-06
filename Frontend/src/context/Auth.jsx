@@ -4,7 +4,7 @@ import axios from "axios";
 // Configura el interceptor para agregar el token automáticamente en cada solicitud
 axios.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token"); // Recupera el token almacenado en localStorage
+        const token = localStorage.getItem("auth"); // Recupera el token almacenado en localStorage
         if (token) {
             config.headers["Authorization"] = `Bearer ${token}`; // Añade el token en el encabezado
         }
@@ -22,7 +22,7 @@ const Auth = {
             const response = await axios.post("http://localhost:5000/login", userData);
             
             if (response.data && response.data.token) {
-                localStorage.setItem("token", response.data.token); // Guarda el token en localStorage
+                localStorage.setItem("auth", response.data.token); // Guarda el token en localStorage
                 return response.data;
             } else {
                 console.error('Error en el inicio de sesión:', response.data.message);

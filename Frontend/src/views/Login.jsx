@@ -22,7 +22,6 @@ function Login() {
         Auth.login(rutUser, pwUser).then((userData) => {
             try {
                 if (userData.success){
-                    localStorage.setItem("auth", userData.token);
                     navigate("/home")
                 }
                 else {
