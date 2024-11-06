@@ -11,10 +11,7 @@
 
 .content-body {
     padding-left: 10px;
-}
-
-#listado-submit:hover {
-    background-color: #ffd6ba;
+    padding-right: 10px;
 }
 
 .bloque-listado {
