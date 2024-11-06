@@ -1,26 +1,38 @@
+// src/context/Auth.jsx
 import axios from "axios";
+
+// Configura el interceptor para agregar el token automáticamente en cada solicitud
+axios.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token"); // Recupera el token almacenado en localStorage
+        if (token) {
+            config.headers["Authorization"] = `Bearer ${token}`; // Añade el token en el encabezado
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 const Auth = {
     login: async (rutUser, pwUser) => {
         try {
-            const userData = {
-                rut_empleado: rutUser,  // Cambia de rut_empresa a rut_empleado
-                contrasena: pwUser
-            };
-
-            const resp = await axios.post("http://localhost:5000/login", userData);
-            // Verifica si resp.data tiene la propiedad success
-            if (resp.data && resp.data.success) {
-                return resp.data;
+            const userData = { rut_empleado: rutUser, contrasena: pwUser };
+            const response = await axios.post("http://localhost:5000/login", userData);
+            
+            if (response.data && response.data.token) {
+                localStorage.setItem("token", response.data.token); // Guarda el token en localStorage
+                return response.data;
             } else {
-                console.log('Error en el inicio de sesión:', resp.data.error); // Usa 'error' para mostrar el mensaje de error
+                console.error('Error en el inicio de sesión:', response.data.message);
                 return null;
             }
         } catch (error) {
-            console.log('Error al intentar iniciar sesión:', error);
+            console.error('Error al intentar iniciar sesión:', error);
             return null;
         }
     }
-}
+};
 
 export default Auth;
