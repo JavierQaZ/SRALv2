@@ -97,7 +97,7 @@ function VisualizacionDatos() {
             <div className="content-body">
                 <div className="d-flex flex-column">
                     <form onSubmit={handleSubmit}>
-                        <div className='d-flex justify align-items-center'>
+                        <div className='d-flex justify-content-between align-items-center'>
                             <label className='form-label mt-3 me-2'>Mes
                                 <input type="text" className='form-control'
                                     value={mes}
@@ -116,7 +116,7 @@ function VisualizacionDatos() {
                             </label>
                             <button
                                 type="submit"
-                                className="btn ms-4 mt-3"
+                                className="btn mt-5 mb-3"
                                 style={{ backgroundColor: '#121113', color: '#ffffff'}}>
                                 Aceptar
                             </button>

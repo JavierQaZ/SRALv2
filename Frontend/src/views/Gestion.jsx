@@ -97,7 +97,7 @@ function Gestion() {
                             </label>
                             <button
                                 type="submit"
-                                className="btn ms-4 mt-3"
+                                className="btn mt-5 mb-3"
                                 style={{ backgroundColor: '#121113', color: '#ffffff'}}>
                                 Aceptar
                             </button>
