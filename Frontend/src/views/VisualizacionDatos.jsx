@@ -84,7 +84,7 @@ function VisualizacionDatos() {
     }, [exitoFecha]);
 
     const ping = exitoFecha ? (
-        <div className='mt-3 ms-4 sidealert'>
+        <div className='mt-5 m-3 sidealert'>
             <Alert severity={alertType}>
                 {exitoFecha}
             </Alert>
@@ -97,7 +97,7 @@ function VisualizacionDatos() {
             <div className="content-body">
                 <div className="d-flex flex-column">
                     <form onSubmit={handleSubmit}>
-                        <div className='d-flex justify-content-between align-items-center'>
+                        <div className='d-flex justify align-items-center'>
                             <label className='form-label mt-3 me-2'>Mes
                                 <input type="text" className='form-control'
                                     value={mes}
