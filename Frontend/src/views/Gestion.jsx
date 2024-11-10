@@ -7,27 +7,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Alert from '@mui/material/Alert'
 import "../styles/SideAlert.css"
+import BloqueGestion from '../components/BloqueGestion';
+import BloqueGestionSelect from '../components/BloqueGestionSelect';
 
 function Gestion() {
     const [datos, setDatos] = useState({});
     const [mes, setMes] = useState("");
     const [anio, setAnio] = useState("");
     const [exitoFecha, setExitoFecha] = useState("");
+    const [showBloques, setShowBloques] = useState(false)
     const [alertType, setAlertType] = useState("success")
-
-    useEffect(() => {
-        obtenerDatos();
-    }, []);
-
-    const obtenerDatos = () => {
-        axios.get(`http://localhost:5000/kpi/gestion?mes=${mes}&anio=${anio}`)
-            .then(response => {
-                setDatos(response.data);
-            })
-            .catch(error => {
-                console.error('Error recolectando datos: ', error);
-            });
-    };
 
     const handleOnChangeMes = (e) => {
         setMes(e.target.value);
@@ -51,6 +40,27 @@ function Gestion() {
             setExitoFecha("El mes debe ser entre 1 y 12")
         }
 
+        const obtenerDatos = () => {
+            axios.get(`http://localhost:5000/kpi/gestion?mes=${mes}&anio=${anio}`) //verificar
+                .then(response => {
+                    if (response.data && response.data.datos){
+                        setDatos(response.data);
+                        setAlertType("success")
+                        setExitoFecha("Fecha enviada exitosamente")
+                    } else {
+                        setDatos([])
+                        setAlertType("warning")
+                        setExitoFecha("Error al obtener datos")
+                    }
+                })
+                .catch(error => {
+                    setAlertType("error")
+                    setExitoFecha("Error al enviar fecha")
+                    console.error('Error recolectando datos: ', error);
+                });
+            setShowBloques(true)
+        };
+
         obtenerDatos();
     };
 
@@ -65,7 +75,7 @@ function Gestion() {
     }, [exitoFecha]);
 
     const ping = exitoFecha ? (
-        <div className='mt-3 ms-4 sidealert'>
+        <div className='mt-5 m-3 sidealert '>
             <Alert severity={alertType}>
                 {exitoFecha}
             </Alert>
@@ -105,34 +115,14 @@ function Gestion() {
                         </div>
                     </form>
                     <hr/>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nombre del KPI</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Costo Total por Mes</td>
-                                <td>{datos.costo_total_por_mes}</td>
-                            </tr>
-                            <tr>
-                                <td>Costo por Hora Trabajada</td>
-                                <td>{datos.costo_por_hora_trabajada}</td>
-                            </tr>
-                            <tr>
-                                <td>Promedio de Horas Trabajadas</td>
-                                <td>{datos.promedio_horas_trabajadas}</td>
-                            </tr>
-                            {datos.costo_total_por_rol && datos.costo_total_por_rol.map((rol, index) => (
-                                <tr key={index}>
-                                    <td>Costo Total de {rol[1]}</td>
-                                    <td>{rol[2]}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {showBloques && (
+                    <div className='gestion-container'>
+                        <BloqueGestion title="Costo Total por Mes" value={datos.costo_total_por_mes}/>
+                        <BloqueGestion title="Costo por Hora Trabajada" value={datos.costo_por_hora_trabajada}/>
+                        <BloqueGestion title="Promedio de Horas Trabajadas" value={datos.promedio_horas_trabajadas}/>
+                        <BloqueGestionSelect title="Costo Total por Rol" value={datos.costo_total_por_rol}/>
+                    </div>
+                    )}
                 </div>
             </div>
         </>

@@ -57,7 +57,7 @@ function VisualizacionDatos() {
                 if (response.data && response.data.datos) {
                     setDatos(response.data.datos);
                     setAlertType("success")
-                    setExitoFecha("Fecha enviada");
+                    setExitoFecha("Fecha enviada exitosamente");
                 } else {
                     setDatos([]);
                     setAlertType("warning")
