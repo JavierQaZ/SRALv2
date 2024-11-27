@@ -103,7 +103,7 @@ function Home(){
                             <Route path="/registro/*" element={<Registro/>}></Route>
                             <Route path="/editarDatos/*" element={<EditarDatos/>}></Route>
                             <Route path="/borrarDatos/*" element={<BorrarDatos/>}></Route>
-                            <Route path="/configuraciones" element={<Configuraciones/>}></Route>
+                            <Route path="/configuraciones/*" element={<Configuraciones/>}></Route>
                         </Routes>
                     </main>
                 </div>

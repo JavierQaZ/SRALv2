@@ -84,3 +84,31 @@
     background-color: #ffffff;
     color: #000000
 }
+
+.bloque-conf-usuarios {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    color: black;
+    background-color: #cccccc;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    align-items: center;
+    display: flex;
+    height: 75px;
+    justify-content: center;
+    width: 240px;
+    max-height: 420px;
+    max-width: 840px;
+    margin: 20px;
+    font-size: 20px;
+    transition: all ease-in .15s;
+    line-height: 100px;
+}
+
+.bloque-conf-usuarios:hover{
+    transform: scale(1.1);
+}
