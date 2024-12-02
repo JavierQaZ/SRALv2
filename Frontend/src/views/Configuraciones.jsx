@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Routes, Route} from 'react-router-dom'
+import {Routes, Route, useLocation} from 'react-router-dom'
 import axios from "axios";
 import Alert from '@mui/material/Alert'
 
@@ -9,18 +9,6 @@ import AgregarUsuario from "./gestionUsuarios/AgregarUsuarios";
 import EditarUsuarios from "./gestionUsuarios/EditarUsuarios";
 import EliminarUsuarios from "./gestionUsuarios/EliminarUsuarios";
 
-const BloqueGestUsuario = () => {
-    return (
-        <>
-            <BloqueConfUsuarios path="agregarUsuario">Agregar Usuario</BloqueConfUsuarios>
-            <hr/>
-            <BloqueConfUsuarios path="editarUsuarios">Editar Usuarios</BloqueConfUsuarios>
-            <hr/>
-            <BloqueConfUsuarios path="eliminarUsuarios">Eliminar Usuarios</BloqueConfUsuarios>
-        </>
-    )
-}
-
 function Configuraciones(){
     const [usuario, setUsuario] = useState("")
     const [contrasena, setContrasena] = useState("")
@@ -28,6 +16,9 @@ function Configuraciones(){
     const [confirmacionContrasena, setConfirmacionContrasena] = useState("")
     const [exitoCambiarContrasena, setExitoCambiarContrasena] = useState("")
     const [alertType, setAlertType] = useState("success")
+    
+    const location = useLocation()
+    const thisRoute = ["/home/configuraciones/agregarUsuario", "/home/configuraciones/editarUsuarios", "/home/configuraciones/eliminarUsuarios"].includes(location.pathname)
 /*
     useEffect(() => {
         axios.get('http://localhost:5000/.../.../')
@@ -96,70 +87,76 @@ function Configuraciones(){
             <h4 className="bg-payne-grey content-title shadow">Configuraciones</h4>
             <div className='content-body'>
                 <div className='container'>
-                    <div className='d-flex'>
-                        <div className="flex-fill d-flex flex-column align-items-center px-4">
-                            <h4>Gestión de Usuarios</h4>
-                            <Routes>
-                                <Route path="/" element={<BloqueGestUsuario/>}></Route>
-                                <Route path="/agregarUsuario" element={<AgregarUsuario/>}></Route>
-                                <Route path="/editarUsuarios" element={<EditarUsuarios/>}></Route>
-                                <Route path="/eliminarUsuarios" element={<EliminarUsuarios/>}></Route>
-                            </Routes>
-                        </div>
+                    {thisRoute ? (
+                        <Routes>
+                            <Route path="/agregarUsuario" element={<AgregarUsuario/>}></Route>
+                            <Route path="/editarUsuarios" element={<EditarUsuarios/>}></Route>
+                            <Route path="/eliminarUsuarios" element={<EliminarUsuarios/>}></Route>
+                        </Routes>
+                    ): (
+                        <div className='d-flex'>
+                            <div className="flex-fill d-flex flex-column align-items-center px-4">
+                                <h4>Gestión de Usuarios</h4>
+                                <BloqueConfUsuarios path="agregarUsuario">Agregar Usuario</BloqueConfUsuarios>
+                                <BloqueConfUsuarios path="editarUsuarios">Editar Usuarios</BloqueConfUsuarios>
+                                <BloqueConfUsuarios path="eliminarUsuarios">Eliminar Usuarios</BloqueConfUsuarios>
+                            </div>
 
-                        <div style={{
-                            width: '1px',
-                            backgroundColor: '#121113',
-                            margin: '0 20px',
-                            alignSelf: 'stretch'
-                        }}></div>
+                            <div style={{
+                                width: '1px',
+                                backgroundColor: '#121113',
+                                margin: '0 20px',
+                                alignSelf: 'stretch'
+                                }}>
+                            </div>
 
-                        <div className="flex-fill px-4">
-                            <form onSubmit={handleSubmitCambioContrasena}>
-                                <div className='d-flex flex-column align-items-center px-4'>
-                                    <h4>Cambiar Contraseña</h4>
-                                    <label className='form-label mt-3'>
-                                        Rut del Usuario
-                                        <input type="text"
-                                            className="form-control"
-                                            value={usuario}
-                                            readOnly
+                            <div className="flex-fill px-4">
+                                <form onSubmit={handleSubmitCambioContrasena}>
+                                    <div className='d-flex flex-column align-items-center px-4'>
+                                        <h4>Cambiar Contraseña</h4>
+                                        <label className='form-label mt-3'>
+                                            Rut del Usuario
+                                            <input type="text"
+                                                className="form-control"
+                                                value={usuario}
+                                                readOnly
+                                                />
+                                        </label>
+                                        <label className='form-label mt-3'>
+                                            Contraseña Actual
+                                            <input type="password"
+                                                className='form-control'
+                                                value={contrasena}
+                                                onChange={handleOnChangeContrasena}
                                             />
-                                    </label>
-                                    <label className='form-label mt-3'>
-                                        Contraseña Actual
-                                        <input type="password"
-                                            className='form-control'
-                                            value={contrasena}
-                                            onChange={handleOnChangeContrasena}
-                                        />
-                                    </label>
-                                    <label className='form-label mt-3'>
-                                        Nueva Contraseña
-                                        <input type="password"
-                                            className='form-control'
-                                            value={nuevaContrasena}
-                                            onChange={handleOnChangeNuevaContrasena}
-                                        />
-                                    </label>
-                                    <label className='form-label mt-3'>
-                                        Confirmar Nueva Contraseña
-                                        <input type="password"
-                                            className='form-control'
-                                            value={confirmacionContrasena}
-                                            onChange={handleOnChangeConfirmacionContrasena}
-                                        />
-                                    </label>
-                                    <br/>
-                                    <button type="submit" className="btn "
-                                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                                    Confirmar Cambios
-                                </button>
-                                </div>
-                                {ping}
-                            </form>
+                                        </label>
+                                        <label className='form-label mt-3'>
+                                            Nueva Contraseña
+                                            <input type="password"
+                                                className='form-control'
+                                                value={nuevaContrasena}
+                                                onChange={handleOnChangeNuevaContrasena}
+                                            />
+                                        </label>
+                                        <label className='form-label mt-3'>
+                                            Confirmar Nueva Contraseña
+                                            <input type="password"
+                                                className='form-control'
+                                                value={confirmacionContrasena}
+                                                onChange={handleOnChangeConfirmacionContrasena}
+                                            />
+                                        </label>
+                                        <br/>
+                                        <button type="submit" className="btn "
+                                        style={{ backgroundColor: '#121113', color: '#ffffff'}}>
+                                        Confirmar Cambios
+                                    </button>
+                                    </div>
+                                    {ping}
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </>
