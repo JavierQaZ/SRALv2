@@ -89,17 +89,15 @@ function Roles() {
                         onChange={handleOnChangeSalarioRol}
                         />
                     </label>
-                </div>
 
-                <button
-                    type="submit"
-                    className="btn ms-4 mt-3"
-                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                    Registrar Rol
-                </button>
-                <br/>
-                <br/>
-                {ping}
+                    <button
+                        type="submit"
+                        className="btn mt-3"
+                        style={{ backgroundColor: '#121113', color: '#ffffff'}}>
+                        Registrar Rol
+                    </button>
+                    {ping}
+                </div>
             </form>
         </>
     )

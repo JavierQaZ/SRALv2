@@ -78,15 +78,12 @@ function RegistroSalida() {
                                     onChange={handleOnChangeRut}
                                     />
                                 </label>
+                                <button type="submit" className="btn mt-3"
+                                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
+                                    Registrar Entrada
+                                </button>
+                                {ping}
                             </div>
-
-                            <button type="submit" className="btn ms-4 mt-3"
-                                style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                                Registrar Salida
-                            </button>
-                            <br/>
-                            <br/>
-                            {ping}
                         </form>
                     </div>
                 </div>

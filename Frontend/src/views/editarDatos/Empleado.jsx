@@ -128,7 +128,7 @@ function Empleado() {
                         Rol
                         <br/>
                         <select
-                            className='custom-select'
+                            className='custom-select form-control'
                             id='inlineFormCustomSelectPref'
                             value={rol}
                             onChange={handleOnChangeRol}
@@ -139,16 +139,15 @@ function Empleado() {
                             ))}
                         </select>
                     </label>
+                    <button
+                        type="submit"
+                        className="btn mt-3"
+                        style={{ backgroundColor: '#121113', color: '#ffffff'}}>
+                        Confirmar cambios
+                    </button>
+                    {ping}
                 </div>
-                <button
-                    type="submit"
-                    className="btn ms-4 mt-3"
-                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                    Confirmar cambios
-                </button>
-                <br/>
-                <br/>
-                {ping}
+                
             </form>
         </>
     )

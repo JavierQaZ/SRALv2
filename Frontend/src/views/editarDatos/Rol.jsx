@@ -84,12 +84,11 @@ function Roles() {
             <form onSubmit={handleSubmit}>
                 <h4>Editar Rol</h4>
                 <div className='d-flex flex-column'>
-
                 <label className='form-label mt-3'>
                         Rol
                         <br/>
                         <select
-                            className='custom-select'
+                            className='custom-select form-control'
                             id='inlineFormCustomSelectPref'
                             value={codigoRol}
                             onChange={handleOnChangeCodigoRol}
@@ -108,17 +107,16 @@ function Roles() {
                         onChange={handleOnChangeSalarioRol}
                         />
                     </label>
+                    <button
+                        type="submit"
+                        className="btn mt-3"
+                        style={{ backgroundColor: '#121113', color: '#ffffff'}}>
+                        Confirmar cambios
+                    </button>
+                    {ping}
                 </div>
 
-                <button
-                    type="submit"
-                    className="btn ms-4 mt-3"
-                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                    Confirmar cambios
-                </button>
-                <br/>
-                <br/>
-                {ping}
+                
             </form>
         </>
     )

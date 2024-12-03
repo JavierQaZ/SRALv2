@@ -65,16 +65,15 @@ function Empleado() {
                         onChange={handleOnChangeRut}
                         />
                     </label>
+                    <button
+                        type="submit"
+                        className="btn mt-3"
+                        style={{ backgroundColor: '#121113', color: '#ffffff'}}>
+                        Borrar Empleado
+                    </button>
+                    {ping}
                 </div>
-                <button
-                    type="submit"
-                    className="btn ms-4 mt-3"
-                    style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                    Borrar Empleado
-                </button>
-                <br/>
-                <br/>
-                {ping}
+                
             </form>
         </>
     )

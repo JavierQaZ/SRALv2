@@ -94,14 +94,16 @@ function Configuraciones(){
                             <Route path="/eliminarUsuarios" element={<EliminarUsuarios/>}></Route>
                         </Routes>
                     ): (
-                        <div className='d-flex'>
-                            <div className="flex-fill d-flex flex-column align-items-center px-4">
+                        <div className='d-flex' style={{ height: '100%'}}>
+                            {/* seccion izquierda */}
+                            <div className="flex-fill d-flex flex-column align-items-center px-4" style={{ flexBasis: '50%'}}>
                                 <h4>Gestión de Usuarios</h4>
                                 <BloqueConfUsuarios path="agregarUsuario">Agregar Usuario</BloqueConfUsuarios>
                                 <BloqueConfUsuarios path="editarUsuarios">Editar Usuarios</BloqueConfUsuarios>
                                 <BloqueConfUsuarios path="eliminarUsuarios">Eliminar Usuarios</BloqueConfUsuarios>
                             </div>
 
+                            {/* linea divisoria */}
                             <div style={{
                                 width: '1px',
                                 backgroundColor: '#121113',
@@ -110,9 +112,10 @@ function Configuraciones(){
                                 }}>
                             </div>
 
-                            <div className="flex-fill px-4">
+                            {/* seccion derecha */}
+                            <div className="flex-fill d-flex flex-column align-items-center justify-content-center" style={{ flexBasis: '50%'}}>
                                 <form onSubmit={handleSubmitCambioContrasena}>
-                                    <div className='d-flex flex-column align-items-center px-4'>
+                                    <div className='d-flex flex-column'>
                                         <h4>Cambiar Contraseña</h4>
                                         <label className='form-label mt-3'>
                                             Rut del Usuario
@@ -146,13 +149,12 @@ function Configuraciones(){
                                                 onChange={handleOnChangeConfirmacionContrasena}
                                             />
                                         </label>
-                                        <br/>
-                                        <button type="submit" className="btn "
-                                        style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                                        Confirmar Cambios
-                                    </button>
+                                        <button type="submit" className="btn mt-3"
+                                            style={{ backgroundColor: '#121113', color: '#ffffff'}}>
+                                            Confirmar Cambios
+                                        </button>
+                                        {ping}
                                     </div>
-                                    {ping}
                                 </form>
                             </div>
                         </div>
