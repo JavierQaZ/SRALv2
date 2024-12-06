@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert'
 import BloqueConfUsuarios from "../components/BloqueConfUsuarios";
 
 import AgregarUsuario from "./gestionUsuarios/AgregarUsuarios";
-import EditarUsuarios from "./gestionUsuarios/EditarUsuarios";
+import VerUsuarios from "./gestionUsuarios/VerUsuarios";
 import EliminarUsuarios from "./gestionUsuarios/EliminarUsuarios";
 
 function Configuraciones(){
@@ -16,9 +16,8 @@ function Configuraciones(){
     const [confirmacionContrasena, setConfirmacionContrasena] = useState("")
     const [exitoCambiarContrasena, setExitoCambiarContrasena] = useState("")
     const [alertType, setAlertType] = useState("success")
-    
     const location = useLocation()
-    const thisRoute = ["/home/configuraciones/agregarUsuario", "/home/configuraciones/editarUsuarios", "/home/configuraciones/eliminarUsuarios"].includes(location.pathname)
+    const thisRoute = ["/home/configuraciones/agregarUsuario", "/home/configuraciones/verUsuarios", "/home/configuraciones/eliminarUsuarios"].includes(location.pathname)
 /*
     useEffect(() => {
         axios.get('http://localhost:5000/.../.../')
@@ -89,8 +88,8 @@ function Configuraciones(){
                 <div className='container'>
                     {thisRoute ? (
                         <Routes>
+                            <Route path="/verUsuarios" element={<VerUsuarios/>}></Route>
                             <Route path="/agregarUsuario" element={<AgregarUsuario/>}></Route>
-                            <Route path="/editarUsuarios" element={<EditarUsuarios/>}></Route>
                             <Route path="/eliminarUsuarios" element={<EliminarUsuarios/>}></Route>
                         </Routes>
                     ): (
@@ -98,8 +97,8 @@ function Configuraciones(){
                             {/* seccion izquierda */}
                             <div className="flex-fill d-flex flex-column align-items-center px-4" style={{ flexBasis: '50%'}}>
                                 <h4>Gestión de Usuarios</h4>
+                                <BloqueConfUsuarios path="verUsuarios">Ver Usuarios</BloqueConfUsuarios>
                                 <BloqueConfUsuarios path="agregarUsuario">Agregar Usuario</BloqueConfUsuarios>
-                                <BloqueConfUsuarios path="editarUsuarios">Editar Usuarios</BloqueConfUsuarios>
                                 <BloqueConfUsuarios path="eliminarUsuarios">Eliminar Usuarios</BloqueConfUsuarios>
                             </div>
 
