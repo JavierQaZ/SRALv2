@@ -11,25 +11,6 @@ function VisualizacionDatos() {
     const [showTable, setShowTable] = useState(false)
     const [alertType, setAlertType] = useState("success")
 
-    useEffect(() => {
-        obtenerKpi();
-    }, []);
-
-    const obtenerKpi = () => {
-        axios.get('http://localhost:5000/empleados/kpi')
-            .then(response => {
-                if (response.data && response.data.datos) {
-                    setDatos(response.data.datos);
-                } else {
-                    setDatos([]);
-                    console.error('La respuesta de KPIs no es un array:', response.data);
-                }
-            })
-            .catch(error => {
-                console.error('Error recolectando KPIs: ', error);
-            });
-    };
-
     const handleOnChangeMes = (e) => {
         setMes(e.target.value);
     };

@@ -50,7 +50,7 @@ function Login() {
     }, [exitoLogin]);
 
     const ping = exitoLogin ? (
-        <div className='mt-3 ms-4 sidealert'>
+        <div className='mt-3 sidealert'>
             <Alert severity={alertType}>
                 {exitoLogin}
             </Alert>
