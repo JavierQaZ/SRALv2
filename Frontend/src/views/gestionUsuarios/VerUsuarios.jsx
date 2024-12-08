@@ -4,7 +4,7 @@ import axios from 'axios'
 function VerUsuarios(){
     const [datos, setDatos] = useState([])
 
-    axios.get(`http://localhost:5000/`)
+    axios.get(`http://localhost:5000/usuarios/get`)
             .then((response) => {
                 if (response.data && response.data.datos) {
                     setDatos(response.data.datos);

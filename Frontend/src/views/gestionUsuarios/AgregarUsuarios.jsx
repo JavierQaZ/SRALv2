@@ -55,7 +55,7 @@ function AgregarUsuario(){
             "contrasena_usuario": pwUsuario,
         }
 
-        axios.post('http://localhost:5000/', nuevoUsuario)
+        axios.post('http://localhost:5000/usuarios/add', nuevoUsuario)
             .then((response) => {
                 setAlertType("success")
                 setExitoAgregarUsuario("Usuario registrado exitosamente")

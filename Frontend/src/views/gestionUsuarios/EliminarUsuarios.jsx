@@ -9,15 +9,15 @@ function EliminarUsuarios(){
     const [exitoEliminarUsuario, setExitoEliminarUsuario] = useState("")
     const [alertType, setAlertType] = useState("success")
 
-/*     useEffect(() => {
-        axios.get('http://localhost:5000/')
+    useEffect(() => {
+        axios.get('http://localhost:5000/usuarios/get')
             .then((response) => {
                 setRutsUsuarios(response.data)
             })
             .catch((error) => {
                 console.error("Error al obtener los usuarios: ", error)
             })
-    }, []); */
+    }, []);
 
     const handleOnChangeRutUsuario = (e) => {
         setRutUsuario(e.target.value)
@@ -32,14 +32,14 @@ function EliminarUsuarios(){
             return
         }
 
-        axios.delete('http://localhost:5000/', {data: {rut_usuario: rutUsuario}})
+        axios.delete('http://localhost:5000/usuarios/delete', {data: {rut_usuario: rutUsuario}})
             .then((response) => {
                 setAlertType("success")
                 setExitoEliminarUsuario("Usuario eliminado exitosamente")
 
                 setRutUsuario("-1")
 
-                axios.get('http://localhost:5000')
+                axios.get('http://localhost:5000/usuarios/get')
                 .then((response) => {
                     setRutsUsuarios(response.data);
                 })
