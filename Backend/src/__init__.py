@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from .routes import route_login, routes_empleados, routes_rol, routes_r_entrada, routes_r_salida
+from .routes import route_login, routes_empleados, routes_rol, routes_r_entrada, routes_r_salida, routes_usuarios
 
 def create_app(Config):
     app = Flask(__name__)
@@ -13,7 +13,7 @@ def create_app(Config):
     app.register_blueprint(routes_rol.bp, url_prefix="/rol")
     app.register_blueprint(routes_r_entrada.bp, url_prefix="/r_entrada")
     app.register_blueprint(routes_r_salida.bp, url_prefix="/r_salida")
-  
+    app.register_blueprint(routes_usuarios.bp, url_prefix="/usuarios")
 
     app.register_blueprint(route_login.bp)
     return app
