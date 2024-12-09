@@ -1,6 +1,6 @@
 from ..database.db_conección import get_connection
 
-def agregar_usuario_service(rut_usuario, nombre_usuario, apellidos_usuario, contrasena_usuario, email_usuario, codigo_rol, rut_empresa):
+def agregar_usuario_service(rut_usuario, nombre_usuario, apellidos_usuario, contrasena_usuario, email_usuario, rut_empresa):
     try:
         connection = get_connection()
         cursor = connection.cursor()
@@ -12,8 +12,8 @@ def agregar_usuario_service(rut_usuario, nombre_usuario, apellidos_usuario, cont
             nombre_usuario,
             apellidos_usuario,
             contrasena_usuario,
-            email_usuario,
-            codigo_rol
+            email_usuario
+           
         ))
         connection.commit()
     except Exception as e:
@@ -33,7 +33,7 @@ def obtener_usuarios(rut_empresa):
                 nombre_usuario, 
                 apellidos_usuario, 
                 email_usuario, 
-                codigo_rol
+               
             FROM usuarios 
             WHERE rut_empresa = %s AND id_rol_gestion = 2
             """,
@@ -65,3 +65,30 @@ def eliminar_usuario(rut_usuario, rut_empresa):
     finally:
         cursor.close()
         connection.close()
+
+        
+def edit_contrasena_usuario(rut_usuario, rut_empresa, contrasena_actual, nueva_contrasena):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Verificar la contraseña actual
+        cursor.execute(
+            "SELECT contrasena_usuario FROM usuarios WHERE rut_usuario = %s AND rut_empresa = %s",
+            (rut_usuario, rut_empresa)
+        )
+        resultado = cursor.fetchone()
+
+        if not resultado or resultado[0] != contrasena_actual:
+            return False  # Contraseña actual incorrecta
+
+        # Actualizar la contraseña
+        cursor.callproc('editar_contrasena', (rut_usuario, nueva_contrasena, rut_empresa))
+        connection.commit()
+        return True
+    except Exception as e:
+        raise e
+    finally:
+        cursor.close()
+        connection.close()
+
