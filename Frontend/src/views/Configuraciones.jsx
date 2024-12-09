@@ -117,14 +117,6 @@ function Configuraciones(){
                                     <div className='d-flex flex-column'>
                                         <h4>Cambiar Contraseña</h4>
                                         <label className='form-label mt-3'>
-                                            Rut del Usuario
-                                            <input type="text"
-                                                className="form-control"
-                                                value={usuario}
-                                                readOnly
-                                                />
-                                        </label>
-                                        <label className='form-label mt-3'>
                                             Contraseña Actual
                                             <input type="password"
                                                 className='form-control'

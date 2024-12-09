@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Routes, Route, Link, useNavigate, Navigate, useLocation} from "react-router-dom";
+import axios from 'axios'
 
 import iconSettings from "../assets/settings.svg"
 import iconLogout from "../assets/logout.svg"
@@ -52,6 +53,22 @@ function Home(){
     const year = today.getFullYear();
     const date = today. getDate();
     const currentDate = date + "/" + month + "/" + year;
+
+    const [datos, setDatos] = useState({
+        nombre_empresa: '',
+        nombre_usuario: ''
+    })
+
+    const getData = async () => {
+        axios.get(`http://localhost:5000/home/info_home`)
+            .then((response) => {
+                setDatos(response.data)
+            })
+        }
+
+    useEffect(() => {
+        getData()
+    }, [])
 
     return(
         (localStorage.getItem("auth")!= undefined) ?
@@ -120,10 +137,10 @@ function Home(){
                     <main className="col-auto col-sm-9 col-md-9 col-lg-9 col-xl-10 content ps-0">
                         {location.pathname === '/home' && (
                             <div>
-                                <h4 className="bg-payne-grey content-title shadow">{}</h4>
+                                <h4 className="bg-payne-grey content-title shadow">{datos.nombre_empresa}</h4>
                                 <div className="content-body">
                                     <div className="welcome">
-                                        <p>¡Bienvenido/a, {}!</p>
+                                        <p>¡Bienvenido/a, {datos.nombre_usuario}!</p>
                                     </div>
                                     <div className="m-4 position-absolute bottom-0 end-0 clockdate">
                                         {time} <br/>
