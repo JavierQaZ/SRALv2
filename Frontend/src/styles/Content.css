@@ -112,3 +112,13 @@
 .bloque-conf-usuarios:hover{
     transform: scale(1.1);
 }
+
+.clockdate {
+    font-weight: bold;
+    font-size: xx-large;
+}
+
+.welcome {
+    margin-left: auto;
+    font-size: x-large;
+}

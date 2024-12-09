@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route, Link, useNavigate, Navigate} from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import { Routes, Route, Link, useNavigate, Navigate, useLocation} from "react-router-dom";
 
 import iconSettings from "../assets/settings.svg"
 import iconLogout from "../assets/logout.svg"
@@ -21,12 +21,37 @@ import Configuraciones from "./Configuraciones.jsx";
 function Home(){
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = () => {
         localStorage.removeItem('auth');
         sessionStorage.removeItem('auth');
         navigate('/login')
     }
+
+    const [time, setTime] = useState()
+    useEffect(() => {
+        const formatTimeUnit = (unit) => unit.toString().padStart(2, '0');
+        const updateTime = () => {
+            const dateObject = new Date()
+            const hour = formatTimeUnit(dateObject.getHours())
+            const minute = formatTimeUnit(dateObject.getMinutes())
+            const second = formatTimeUnit(dateObject.getSeconds())
+            const currentTime = `${hour} : ${minute} : ${second}`
+            setTime(currentTime)
+        }
+
+        const intervalId = setInterval(updateTime, 1000);
+        updateTime();
+
+        return () => clearInterval(intervalId)
+    }, [])
+
+    const today = new Date();
+    const month = today.getMonth()+1;
+    const year = today.getFullYear();
+    const date = today. getDate();
+    const currentDate = date + "/" + month + "/" + year;
 
     return(
         (localStorage.getItem("auth")!= undefined) ?
@@ -93,6 +118,20 @@ function Home(){
                     </div>
 
                     <main className="col-auto col-sm-9 col-md-9 col-lg-9 col-xl-10 content ps-0">
+                        {location.pathname === '/home' && (
+                            <div>
+                                <h4 className="bg-payne-grey content-title shadow">{}</h4>
+                                <div className="content-body">
+                                    <div className="welcome">
+                                        <p>¡Bienvenido/a, {}!</p>
+                                    </div>
+                                    <div className="m-4 position-absolute bottom-0 end-0 clockdate">
+                                        {time} <br/>
+                                        {currentDate}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         <Routes>
                             /* añadir rutas */
                             <Route path="/registroInicio" element={<RegistroInicio/>}></Route>
