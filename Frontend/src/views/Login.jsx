@@ -68,29 +68,7 @@ function Login() {
                 </CardHeader>
                 <form onSubmit={handleClick} className="space-y-4">
                     <div className="space-y-2">
-                        <label
-                            className="label"
-                            htmlFor="username">
-                                Rut Empresa
-                        </label>
-
-                        <input
-                            className="input"
-                            id="username"
-                            type="text"
-                            placeholder="Ingrese el Rut de Empresa"
-                            //value={rutEmpresa}
-                            //onChange={(e) => setRutEmpresa(e.target.value)}
-                            //required
-                        />
-                    </div>
-                    <br/>
-                    <div className="space-y-2">
-                        <label
-                            className="label"
-                            htmlFor="username">
-                        RUT Usuario</label>
-
+                        <label className="label" htmlFor="username"> RUT Usuario </label>
                         <input
                             className="input"
                             id="username"
