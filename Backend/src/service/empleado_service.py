@@ -1,99 +1,56 @@
 from ..database.db_conección import get_connection
 
-
-def agregar_empleado_service(rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol):#, TotalHoras, SueldoTotal):
+def agregar_empleado_service(rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol, rut_empresa):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-
-        # Llamar al procedimiento almacenado para agregar un empleado
-        cursor.callproc('agregar_empleado', (rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol))#, TotalHoras, SueldoTotal))
-        
-        # Commit para aplicar los cambios en la base de datos
+        cursor.callproc('agregar_empleado', (rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol, rut_empresa))
         connection.commit()
-        
-        # Cerrar conexión y cursor
-        cursor.close()
-        connection.close()
-        
     except Exception as e:
-        # Manejar errores
-        print("Error al agregar empleado:", e)
-        
-        
-def editar_empleado_service(rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol, TotalHoras, SueldoTotal):
-    try:
-        connection = get_connection()
-        cursor = connection.cursor()
-
-        # Llamar al procedimiento almacenado para editar un empleado
-        cursor.callproc('editar_empleado', (rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol, TotalHoras, SueldoTotal))
-        
-        # Commit para aplicar los cambios en la base de datos
-        connection.commit()
-        
-        # Cerrar conexión y cursor
-        cursor.close()
-        connection.close()
-        
-    except Exception as e:
-        # Manejar errores
-        print("Error al editar empleado:", e)
         raise e
-    
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def editar_empleado_service(rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.callproc('editar_empleado', (rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol))
+        connection.commit()
+    except Exception as e:
+        raise e
+    finally:
+        cursor.close()
+        connection.close()
+
+
 def delete_empleado_service(rut_empleado):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-
-        # Llamar al procedimiento almacenado para eliminar un empleado
         cursor.callproc('eliminar_empleado', (rut_empleado,))
-        
-        # Commit para aplicar los cambios en la base de datos
         connection.commit()
-        
-        # Cerrar conexión y cursor
+    except Exception as e:
+        raise e
+    finally:
         cursor.close()
         connection.close()
-        
-    except Exception as e:
-        # Manejar errores
-        print("Error al eliminar empleado:", e)
-        raise e
-        
 
-    
-def obtener_empleados():
+
+def obtener_empleados(rut_empresa):
     try:
         connection = get_connection()
         cursor = connection.cursor()
-
-        # Ejecutar la consulta SQL para obtener todos los empleados
-        cursor.execute("SELECT rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol FROM empleados")
-
-        # Obtener los resultados
+        cursor.execute(
+            "SELECT rut_empleado, nombre_empleado, apellidos_empleado, codigo_rol FROM empleados WHERE rut_empresa = %s",
+            (rut_empresa,)
+        )
         empleados = cursor.fetchall()
-
-        # Cerrar conexión y cursor
+        return empleados
+    except Exception as e:
+        raise e
+    finally:
         cursor.close()
         connection.close()
-
-        return empleados
-    
-    except Exception as e:
-        # Manejar errores
-        print("Error al obtener empleados:", e)
-        return None
-
-
-#{
-#    "rut_empleado": "1111111-8",
-#    "nombre_empleado": "perla",
-#    "apellidos_empleado": "Pérez",
-#    "codigo_rol": "1",
-#    "TotalHoras": 40,
-#    "SueldoTotal": 1000
-#}
-
-
-
