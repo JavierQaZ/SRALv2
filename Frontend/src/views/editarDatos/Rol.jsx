@@ -115,8 +115,6 @@ function Roles() {
                     </button>
                     {ping}
                 </div>
-
-                
             </form>
         </>
     )
