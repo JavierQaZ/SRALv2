@@ -10,7 +10,6 @@ import VerUsuarios from "./gestionUsuarios/VerUsuarios";
 import EliminarUsuarios from "./gestionUsuarios/EliminarUsuarios";
 
 function Configuraciones(){
-    const [usuario, setUsuario] = useState("")
     const [contrasena, setContrasena] = useState("")
     const [nuevaContrasena, setNuevaContrasena] = useState("")
     const [confirmacionContrasena, setConfirmacionContrasena] = useState("")
@@ -18,17 +17,7 @@ function Configuraciones(){
     const [alertType, setAlertType] = useState("success")
     const location = useLocation()
     const thisRoute = ["/home/configuraciones/agregarUsuario", "/home/configuraciones/verUsuarios", "/home/configuraciones/eliminarUsuarios"].includes(location.pathname)
-/*
-    useEffect(() => {
-        axios.get('http://localhost:5000/.../.../')
-            .then((response) => {
-                setContrasena(response.data)
-            })
-            .catch((error) => {
-                console.error("Error al obtener los datos: ", error)
-            })
-    }, [])
-*/
+
     const handleOnChangeContrasena = (e) => {
         setContrasena(e.target.value)
     }
@@ -47,22 +36,39 @@ function Configuraciones(){
         if (contrasena === "" || nuevaContrasena === "" || confirmacionContrasena === ""){
             setAlertType("warning")
             setExitoCambiarContrasena("Todos los campos son obligatorios")
+            return
         }
         if (nuevaContrasena !== confirmacionContrasena){
             setAlertType("warning")
             setExitoCambiarContrasena("La contraseña nueva y la confirmación no son iguales")
+            return
         }
-        if (nuevaContrasena.length < 8){
-            setAlertType("warning")
-            setExitoCambiarContrasena("La contraseña debe tener al menos 8 caracteres")
-        }
-    }
 
-    const cambioContrasena = {
-        "": usuario,
-        "": contrasena,
-        "": nuevaContrasena,
-        "": confirmacionContrasena
+        const cambioContrasena = {
+            "contrasena_actual": contrasena,
+            "nueva_contrasena": nuevaContrasena,
+            "confirmar_contrasena": confirmacionContrasena
+        }
+
+        axios.put('http://localhost:5000/usuarios/edit_contrasena', cambioContrasena)
+            .then((response) => {
+                setAlertType("success")
+                setExitoCambiarContrasena("Contraseña cambiada")
+                console.log("Contraseña cambiada", response.data)
+
+                setContrasena("")
+                setNuevaContrasena("")
+                setConfirmacionContrasena("")
+            })
+            .catch((error) => {
+                setAlertType("error")
+                setExitoCambiarContrasena("Error al cambiar la contraseña")
+                console.error("Error al cambiar la contraseña: ", error)
+
+                setContrasena("")
+                setNuevaContrasena("")
+                setConfirmacionContrasena("")
+            })
     }
 
     useEffect(() => {
