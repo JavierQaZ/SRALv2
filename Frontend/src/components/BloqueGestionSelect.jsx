@@ -48,10 +48,10 @@ const BloqueGestionSelect = ({title, value}) => {
                     <option key={rol.codigo_rol} value={rol.codigo_rol}>{rol.nombre_rol}</option>
                 ))}
             </select>
-            {rolSeleccionado && codigoRol !== "-1" ? (
+            {codigoRol !== "-1" ? (
                 <p>
                     {costosPorRol[codigoRol] !== undefined
-                        ? `$${costosPorRol[codigoRol].toLocaleString()}`
+                        ? `${costosPorRol[codigoRol].toLocaleString()}`
                         : ' - '}
                 </p>
             ):(
