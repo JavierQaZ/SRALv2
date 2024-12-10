@@ -192,7 +192,7 @@ function Informes(){
             "anio" : i3Anio
         }
 
-        axios.post(`http://localhost:5000/informes/`, i3datos)
+        axios.post(`http://localhost:5000/informes/costo_total`, i3datos)
         .then((response) => {
             const link = document.createElement('a')
             const pdfBlob = base64ToBlob(response.data.pdf, 'application/pdf')
