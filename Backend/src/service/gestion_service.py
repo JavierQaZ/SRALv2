@@ -1,5 +1,5 @@
 from ..database.db_conección import get_connection
-import pymysql
+
 
 def costo_total_service(mes, anio, rut_empresa):
     try:
