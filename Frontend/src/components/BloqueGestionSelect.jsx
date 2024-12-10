@@ -18,10 +18,19 @@ const BloqueGestionSelect = ({title, value}) => {
     }, []);
 
     useEffect(() => {
-        if (Array.isArray(value) && value.length > 0 ){
+        if (Array.isArray(value) && value.length > 0) {
             const costosPorRolObj = value.reduce((acc, item) => {
-                const key = Object.keys(item[0])
-                acc[key] = item[key]
+                if (Array.isArray(item) && item.length > 0 && typeof item[0] === 'object') {
+                    try {
+                        const keys = Object.keys(item[0])
+                        if (keys.length > 0) {
+                            const key = keys[0]
+                            acc[key] = item[0][key]
+                        }
+                    } catch (error) {
+                        console.error("Error processing item:", item, error);
+                    }
+                }
                 return acc;
             }, {})
             setCostosPorRol(costosPorRolObj)
