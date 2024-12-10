@@ -5,7 +5,9 @@ const BloqueGestion = ({title, value}) => {
     return (
         <div className="bloque-gestion">
             <h2>{title}</h2>
-            <p>{value}</p>
+                <p>
+                    {value !== "None" ? value: ' - '}
+                </p>
         </div>
     )
 }
