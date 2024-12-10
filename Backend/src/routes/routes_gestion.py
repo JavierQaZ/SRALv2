@@ -1,27 +1,32 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
-from ..service.gestion_service import costo_total_por_mes
+from ..service.gestion_service import  costo_total_service
 
 bp = Blueprint('gestion_Blueprint', __name__)
 
-@bp.route('/total_sueldos', methods=['GET'])
-@jwt_required()
-def total_sueldos():
-    try:
-        # Obtener rut_empresa desde los claims adicionales del JWT
-        claims = get_jwt()
-        rut_empresa = claims.get('rut_empresa')  # Obtener rut_empresa del JWT
-        
-        if not rut_empresa:
-            return jsonify({"error": "rut_empresa no encontrado en el token"}), 400
 
-        # Obtener el total de sueldos de todos los roles para la empresa
-        total_sueldos = costo_total_por_mes(rut_empresa)
-        
-        if total_sueldos is not None:
-            return jsonify({"total_sueldos": total_sueldos}), 200
-        else:
-            return jsonify({"error": "Error al obtener el total de sueldos"}), 500
+@bp.route('/costo_total', methods=['POST'])
+@jwt_required()
+def obtener_costo_total():
+    try:
+        # Extraer claims y parámetros
+        claims = get_jwt()
+        rut_empresa = claims.get('rut_empresa')
+        data = request.get_json()
+
+        mes = int(data.get('mes'))
+        anio = int(data.get('anio'))
+
+        # Validar parámetros
+        if not rut_empresa or not mes or not anio:
+            return jsonify({"error": "Parámetros faltantes"}), 400
+
+        # Llamar al servicio
+        resultado = costo_total_service(mes, anio, rut_empresa)
+
+        # Devolver el resultado directamente
+        return jsonify(resultado), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error en obtener_costo_total: {e}")
+        return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
