@@ -14,9 +14,6 @@ function EliminarUsuarios(){
             .then((response) => {
                 setRutsUsuarios(response.data)
             })
-            .catch((error) => {
-                console.error("Error al obtener los usuarios: ", error)
-            })
     }, []);
 
     const handleOnChangeRutUsuario = (e) => {
@@ -32,10 +29,11 @@ function EliminarUsuarios(){
             return
         }
 
-        axios.delete('http://localhost:5000/usuarios/delete', {data: {rut_usuario: rutUsuario}})
+        axios.delete('http://localhost:5000/usuarios/delete', { data: { rut_usuario: rutUsuario } })
             .then((response) => {
                 setAlertType("success")
                 setExitoEliminarUsuario("Usuario eliminado exitosamente")
+                console.log("Rol borrado exitosamente", response.data)
 
                 setRutUsuario("-1")
 
@@ -44,8 +42,7 @@ function EliminarUsuarios(){
                     setRutsUsuarios(response.data);
                 })
                 .catch((error) => {
-                    setAlertType("error")
-                    setExitoEliminarUsuario("Error al obtener los Usuarios después de borrar: ", error)
+                    console.error("Error al obtener los datos después de borrar: ", error)
                 })
             })
             .catch((error) => {
@@ -91,7 +88,7 @@ function EliminarUsuarios(){
                                 <option value='-1'>Seleccione el Usuario</option>
                                 {rutsUsuarios.map((item) => (
                                     <option key={item.rut_usuario} value={item.rut_usuario}>
-                                        {item.rut_usuario} - {item.nombre_usuario} {item.apellido_usuario}
+                                        {item.rut_usuario} - {item.nombre_usuario} {item.apellidos_usuario}
                                     </option>
                                 ))}
                             </select>
