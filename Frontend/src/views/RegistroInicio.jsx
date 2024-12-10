@@ -8,34 +8,34 @@ function RegistroInicio() {
     const [currentDateTime, setCurrentDateTime] = useState(null);
     const [exitoRegistroInicio, setExitoRegistroInicio] = useState("")
     const [alertType, setAlertType] = useState("success")
-    const [returnRUT, setReturnRUT] = useState("")
     const [returnHora, setReturnHora] = useState("")
+    const [returnRUT, setReturnRUT] = useState("")
 
     const handleOnChangeRut = (e) => {
         console.log(e.target.value)
         setRut(e.target.value)
     }
 
-    const handleCaptureTime = () => {
+    const handleCaptureData = () => {
         const now = new Date();
-        setCurrentDateTime(now.toLocaleString());
+        const formatedHora = now.toLocaleTimeString()
+        setCurrentDateTime(now.toLocaleString())
+        setReturnHora(formatedHora);
+        setReturnRUT(rut)
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleCaptureTime();
+        handleCaptureData();
         const registroRutInicio = {
             "rut_empleado":  rut,
             "horaIngreso_registro": currentDateTime
-
         }
 
         axios.post('http://localhost:5000/r_entrada/add', registroRutInicio)
             .then((response) => {
                 setExitoRegistroInicio("Registro de Inicio exitoso")
                 setAlertType("success");
-                setReturnRUT(response.data.rut_empleado)
-                setReturnHora(response.data.horaInicio_registro)
                 setRut("")
                 console.log("Registro del Inicio exitoso", response.data)
             })
@@ -87,8 +87,6 @@ function RegistroInicio() {
                                 </button>
                                 {ping}
                             </div>
-
-                            
                         </form>
                     </div>
                 </div>

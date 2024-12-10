@@ -16,14 +16,17 @@ function RegistroSalida() {
         setRut(e.target.value)
     }
 
-    const handleCaptureTime = () => {
+    const handleCaptureData = () => {
         const now = new Date();
-        setCurrentDateTime(now.toLocaleString());
+        const formatedHora = now.toLocaleTimeString()
+        setCurrentDateTime(now.toLocaleString())
+        setReturnHora(formatedHora);
+        setReturnRUT(rut)
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleCaptureTime();
+        handleCaptureData();
         const registroRutSalida = {
             "rut_empleado":  rut,
             "horaSalida_registro": currentDateTime
@@ -33,8 +36,7 @@ function RegistroSalida() {
             .then((response) => {
                 setExitoRegistroSalida("Registro de salida exitoso")
                 setAlertType("success")
-                setReturnRUT(response.data.rut_empleado)
-                setReturnHora(response.data.horaSalida_registro)
+                setRut("")
                 console.log("Registro de salida exitoso", response.data)
             })
             .catch ((error) => {
