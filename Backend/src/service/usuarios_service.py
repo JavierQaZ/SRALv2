@@ -32,12 +32,12 @@ def obtener_usuarios(rut_empresa):
                 rut_usuario, 
                 nombre_usuario, 
                 apellidos_usuario, 
-                email_usuario, 
+                email_usuario
                
             FROM usuarios 
             WHERE rut_empresa = %s AND id_rol_gestion = 2
             """,
-            (rut_empresa,)
+            (rut_empresa)
         )
         usuarios = cursor.fetchall()
         return usuarios
