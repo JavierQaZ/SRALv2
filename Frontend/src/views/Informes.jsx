@@ -97,6 +97,7 @@ function Informes(){
         .catch((error) => {
             setAlertType1("error")
             setExitoInforme1("Error al generar el informe")
+            console.log("Error al generar el informe: ", error)
         })
 
 
@@ -128,6 +129,7 @@ function Informes(){
         if ( i2Mes < 1 || i2Mes > 12 ){
             setAlertType2("warning")
             setExitoInforme2("El mes debe ser entre 1 y 12")
+            return;
         }
 
         const i2datos = {
@@ -136,7 +138,29 @@ function Informes(){
             "anio" : i2Anio
         }
 
-        axios.post(``, i2datos)
+        axios.post(`http://localhost:5000/informes/informe_rol`, i2datos)
+        .then((response) => {
+            const link = document.createElement('a')
+            const pdfBlob = base64ToBlob(response.data.pdf, 'application/pdf')
+            const url = window.URL.createObjectURL(pdfBlob)
+            link.href = url
+            link.download = response.data.filename
+
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+
+            window.URL.revokeObjectURL(url)
+
+            setAlertType2("success")
+            setExitoInforme2("Informe generado exitosamente")
+        })
+        .catch((error) => {
+            setAlertType2("error")
+            setExitoInforme2("Error al generar el informe")
+            console.log("Error al generar el informe: ", error)
+        })
+
     }
 
     //Informe 3 - Costo Total Laboral
@@ -168,7 +192,28 @@ function Informes(){
             "anio" : i3Anio
         }
 
-        axios.post(``, i3datos)
+        axios.post(`http://localhost:5000/informes/`, i3datos)
+        .then((response) => {
+            const link = document.createElement('a')
+            const pdfBlob = base64ToBlob(response.data.pdf, 'application/pdf')
+            const url = window.URL.createObjectURL(pdfBlob)
+            link.href = url
+            link.download = response.data.filename
+
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+
+            window.URL.revokeObjectURL(url)
+
+            setAlertType3("success")
+            setExitoInforme3("Informe generado exitosamente")
+        })
+        .catch((error) => {
+            setAlertType3("error")
+            setExitoInforme3("Error al generar el informe")
+            console.log("Error al generar el informe: ", error)
+        })
     }
 
     const handleOnChangeNombreInforme = (e) => {
