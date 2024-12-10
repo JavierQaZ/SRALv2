@@ -97,7 +97,7 @@ function AgregarUsuario(){
     }, [exitoAgregarUsuario]);
 
     const ping = exitoAgregarUsuario ? (
-        <div className='mt-3'>
+        <div className='m-4 position-absolute bottom-0 end-0'>
             <Alert severity={alertType}>{exitoAgregarUsuario}</Alert>
         </div>
     ): null;
