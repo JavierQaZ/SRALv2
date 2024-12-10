@@ -10,7 +10,7 @@ function App() {
         <Routes>
             <Route
                 path = "/"
-                element = {<Navigate to = "login"/>}/>
+                element = {<Navigate to = "/login"/>}/>
 
             <Route
                 path = "/login"
