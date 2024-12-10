@@ -45,7 +45,7 @@ def costo_total_por_hora_service(mes, anio, rut_empresa):
             return {
  #               'total_horas_trabajadas': str(resultado[0]),
  #               'costo_total_mensual': str(resultado[1]),
-                'costo_por_hora': str(resultado[2])
+                'costo_por_hora': int(resultado[2])
             }
         else:
             return {
@@ -106,9 +106,10 @@ def costo_total_por_rol_service(mes, anio, rut_empresa):
         # Leer el resultado
         resultados = []
         for result in cursor.fetchall():
+            # Redondear el costo total a entero
             resultados.append({
                 'codigo_rol': result[0],
-                'costo_total': float(result[3])
+                'costo_total': int(result[3])  # Redondeo del valor
             })
 
         return resultados
