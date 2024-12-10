@@ -1,7 +1,9 @@
 from flask_jwt_extended import create_access_token
 from ..database.db_conección import get_connection
 
+
 def login(rut_usuario, contrasena_usuario):
+
     try:
         # Validación de las entradas antes de la consulta
         if not rut_usuario or not contrasena_usuario:
@@ -34,3 +36,5 @@ def login(rut_usuario, contrasena_usuario):
             cursor.close()
         if connection:
             connection.close()
+
+

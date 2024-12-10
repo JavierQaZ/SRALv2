@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
-from ..service.usuarios_service import agregar_usuario_service,obtener_usuarios, eliminar_usuario, edit_contrasena_usuario
+from ..service.usuarios_service import agregar_usuario_service,obtener_usuarios, eliminar_usuario, editar_contrasena_usuario, verificar_contrasena_actual
 
 bp = Blueprint('usuarios_Blueprint', __name__)
 
@@ -110,32 +110,36 @@ def edit_contrasena():
         # Verificar que todos los campos estén presentes y sean válidos
         for field, field_type in required_fields.items():
             if field not in data or not isinstance(data[field], field_type):
-                return jsonify({"error": f"El campo '{field}' es requerido y debe ser una cadena"}), 400
+                return jsonify({"error": f"El campo '{field}' es requerido y debe ser una cadena de texto."}), 400
 
         # Verificar que las contraseñas nuevas coincidan
         if data['nueva_contrasena'] != data['confirmar_contrasena']:
-            return jsonify({"error": "Las contraseñas no coinciden"}), 400
+            return jsonify({"error": "Las contraseñas nuevas no coinciden."}), 400
 
-        # Obtener rut_usuario y rut_empresa desde los claims adicionales del JWT
+        # Obtener rut_usuario desde los claims adicionales del JWT
         claims = get_jwt()
-        rut_usuario = claims.get('rut_usuario')  # Obtenemos el rut_usuario del JWT
-        rut_empresa = claims.get('rut_empresa')  # Obtenemos el rut_empresa del JWT
+        rut_usuario = claims.get('sub')  # Obtenemos el rut_usuario del JWT
 
-        if not rut_usuario or not rut_empresa:
-            return jsonify({"error": "rut_usuario o rut_empresa no encontrados en el token"}), 400
+        # Verificar que rut_usuario esté presente en el token
+        if not rut_usuario:
+            return jsonify({"error": "El campo 'rut_usuario' no está presente en el token."}), 400
 
-        # Llamar al servicio para verificar la contraseña actual y actualizar la nueva
-        resultado = edit_contrasena_usuario(
+        # Verificar la contraseña actual antes de proceder a cambiarla
+        resultado = verificar_contrasena_actual(rut_usuario, data['contrasena_actual'])
+
+        if not resultado:
+            return jsonify({"error": "La contraseña actual no es correcta."}), 401
+
+        # Llamar al servicio para actualizar la nueva contraseña
+        resultado = editar_contrasena_usuario(
             rut_usuario=rut_usuario,
-            rut_empresa=rut_empresa,
-            contrasena_actual=data['contrasena_actual'],
             nueva_contrasena=data['nueva_contrasena']
         )
 
         if resultado:
-            return jsonify({"message": "Contraseña actualizada exitosamente"}), 200
+            return jsonify({"message": "Contraseña actualizada exitosamente."}), 200
         else:
-            return jsonify({"error": "La contraseña actual no es correcta"}), 401
+            return jsonify({"error": "Hubo un error al actualizar la contraseña."}), 500
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Ocurrió un error inesperado: {str(e)}"}), 500

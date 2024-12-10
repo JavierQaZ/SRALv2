@@ -55,7 +55,7 @@ def eliminar_usuario(rut_usuario):
         # Asegúrate de pasar el argumento como una tupla (con una coma al final)
         cursor.callproc('eliminar_usuario', (rut_usuario,))  # Nota la coma al final
         connection.commit()
-        
+
     except Exception as e:
         raise e
     finally:
@@ -64,28 +64,46 @@ def eliminar_usuario(rut_usuario):
 
 
         
-def edit_contrasena_usuario(rut_usuario, rut_empresa, contrasena_actual, nueva_contrasena):
+def editar_contrasena_usuario(rut_usuario, nueva_contrasena):
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Llamada al procedimiento almacenado
+        cursor.callproc('editar_contrasena', (rut_usuario, nueva_contrasena))
+        connection.commit()
+
+        # Verificar si se afectó alguna fila
+        if cursor.rowcount > 0:
+            return True
+        return False
+
+    except Exception as e:
+        raise e
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def verificar_contrasena_actual(rut_usuario, contrasena_actual):
     try:
         connection = get_connection()
         cursor = connection.cursor()
 
         # Verificar la contraseña actual
         cursor.execute(
-            "SELECT contrasena_usuario FROM usuarios WHERE rut_usuario = %s AND rut_empresa = %s",
-            (rut_usuario, rut_empresa)
+            "SELECT contrasena_usuario FROM usuarios WHERE rut_usuario = %s",
+            (rut_usuario,)
         )
         resultado = cursor.fetchone()
 
         if not resultado or resultado[0] != contrasena_actual:
             return False  # Contraseña actual incorrecta
 
-        # Actualizar la contraseña
-        cursor.callproc('editar_contrasena', (rut_usuario, nueva_contrasena, rut_empresa))
-        connection.commit()
-        return True
+        return True  # Contraseña correcta
+
     except Exception as e:
         raise e
     finally:
         cursor.close()
         connection.close()
-
