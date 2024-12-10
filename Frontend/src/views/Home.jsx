@@ -24,6 +24,27 @@ function Home(){
     const navigate = useNavigate();
     const location = useLocation();
 
+    useEffect(() => {
+        const interceptor = axios.interceptors.response.use(
+            (response) => response,
+            (error) => {
+
+                if (error.response && error.response.status === 401) {
+
+                    localStorage.removeItem('auth');
+                    sessionStorage.removeItem('auth');
+
+                    navigate('/login');
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        return () => {
+            axios.interceptors.response.eject(interceptor);
+        };
+    }, [navigate]);
+
     const handleLogout = () => {
         localStorage.removeItem('auth');
         sessionStorage.removeItem('auth');
