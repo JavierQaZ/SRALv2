@@ -5,6 +5,7 @@ const BloqueGestionSelect = ({title, value}) => {
 
     const [roles, setRoles] = useState([])
     const [codigoRol, setCodigoRol] = useState("")
+    const [costosPorRol, setCostosPorRol] = useState([])
 
     useEffect(() => {
         axios.get('http://localhost:5000/rol/get')
@@ -15,6 +16,17 @@ const BloqueGestionSelect = ({title, value}) => {
                 console.error("Error al obtemer los roles: ", error);
             })
     }, []);
+
+    useEffect(() => {
+        if (Array.isArray(value) && value.length > 0 ){
+            const costosPorRolObj = value.reduce((acc, item) => {
+                const key = Object.keys(item[0])
+                acc[key] = item[key]
+                return acc;
+            }, {})
+            setCostosPorRol(costosPorRolObj)
+        }
+    }, [value])
 
     const handleOnChangeCodigoRol = (e) => {
         setCodigoRol(e.target.value)
@@ -35,12 +47,15 @@ const BloqueGestionSelect = ({title, value}) => {
                     <option key={rol.codigo_rol} value={rol.codigo_rol}>{rol.nombre_rol}</option>
                 ))}
             </select>
-            {rolSeleccionado ? (
-                <p>{value}</p>
+            {rolSeleccionado && codigoRol !== "-1" ? (
+                <p>
+                    {costosPorRol[rolSeleccionado.nombre_rol] !== undefined
+                        ? costosPorRol[rolSeleccionado.nombre_rol]
+                        : ' - '}
+                </p>
             ):(
                 <p> - </p>
             )}
-            
         </div>
     )
 }

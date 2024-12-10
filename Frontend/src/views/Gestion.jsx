@@ -18,6 +18,11 @@ function Gestion() {
     const [showBloques, setShowBloques] = useState(false)
     const [alertType, setAlertType] = useState("success")
 
+    const [costoTotal, setCostoTotal] = useState("")
+    const [costoHora, setCostoHora] = useState("")
+    const [promedioHoras, setPromedioHoras] = useState("")
+    const [costoRol, setCostoRol] = useState("")
+
     const handleOnChangeMes = (e) => {
         setMes(e.target.value);
     };
@@ -28,6 +33,7 @@ function Gestion() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setShowBloques(true)
 
         if (mes === "" || anio === ""){
             setAlertType("warning")
@@ -40,28 +46,51 @@ function Gestion() {
             setExitoFecha("El mes debe ser entre 1 y 12")
         }
 
-        const obtenerDatos = () => {
-            axios.get(`http://localhost:5000/kpi/gestion?mes=${mes}&anio=${anio}`) //verificar
-                .then(response => {
-                    if (response.data && response.data.datos){
-                        setDatos(response.data);
-                        setAlertType("success")
-                        setExitoFecha("Fecha enviada exitosamente")
-                    } else {
-                        setDatos([])
-                        setAlertType("warning")
-                        setExitoFecha("Error al obtener datos")
-                    }
-                })
-                .catch(error => {
-                    setAlertType("error")
-                    setExitoFecha("Error al enviar fecha")
-                    console.error('Error recolectando datos: ', error);
-                });
-            setShowBloques(true)
-        };
+        const mesanio = {
+            "mes" : mes,
+            "anio" : anio
+        }
 
-        obtenerDatos();
+        const handleSimpleResponse = (setter) => (response) => {
+            const value = Object.values(response.data)[0]
+            setter(value)
+        }
+
+        const getCostoTotal = () => {
+            axios.post(`http://localhost:5000/gestion/costo_total`, mesanio)
+            .then (
+                handleSimpleResponse(setCostoTotal)
+            )
+        }
+
+        const getCostoHora = () => {
+            axios.post(`http://localhost:5000/gestion/costo_total_por_hora`, mesanio)
+            .then (
+                handleSimpleResponse(setCostoHora)
+            )
+        }
+
+
+        const getPromedioHoras = () => {
+            axios.post(`http://localhost:5000/gestion/promedio_horas`, mesanio)
+            .then(
+                handleSimpleResponse(setPromedioHoras)
+            )
+        }
+
+        const getCostoRol = () => {
+            axios.post(`http://localhost:5000/gestion/costo_total_por_rol`, mesanio)
+            .then((response) => {
+                setCostoRol(response.data)
+            })
+        }
+
+        getCostoTotal()
+        getCostoHora()
+        getPromedioHoras()
+        getCostoRol()
+        setMes("")
+        setAnio("")
     };
 
     useEffect(() => {
@@ -117,10 +146,10 @@ function Gestion() {
                     <hr/>
                     {showBloques && (
                     <div className='gestion-container'>
-                        <BloqueGestion title="Costo Total por Mes" value={datos.costo_total_por_mes}/>
-                        <BloqueGestion title="Costo por Hora Trabajada" value={datos.costo_por_hora_trabajada}/>
-                        <BloqueGestion title="Promedio de Horas Trabajadas" value={datos.promedio_horas_trabajadas}/>
-                        <BloqueGestionSelect title="Costo Total por Rol" value={datos.costo_total_por_rol}/>
+                        <BloqueGestion title="Costo Total por Mes" value={costoTotal}/>
+                        <BloqueGestion title="Costo por Hora Trabajada" value={costoHora}/>
+                        <BloqueGestion title="Promedio de Horas Trabajadas" value={promedioHoras}/>
+                        <BloqueGestionSelect title="Costo Total por Rol" value={costoRol}/>
                     </div>
                     )}
                 </div>
