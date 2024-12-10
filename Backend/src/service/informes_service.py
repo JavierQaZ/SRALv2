@@ -1,6 +1,6 @@
 from ..database.db_conección import get_connection
 from fpdf import FPDF
-import os
+import os,tempfile
 
 def calcular_kpi_empleado_service(mes, anio, rut_empresa, rut_empleado):
     try:
@@ -62,7 +62,7 @@ def generar_pdf_kpi_empleado(datos):
 
     # Guardar PDF en directorio temporal
     import tempfile
-    import os
+    
 
     # Crear un archivo temporal
     with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
@@ -70,3 +70,82 @@ def generar_pdf_kpi_empleado(datos):
         temp_file_path = temp_file.name
 
     return temp_file_path
+
+
+
+
+def costo_total_por_rol_service(mes, anio, rut_empresa, codigo_rol):
+    try:
+        # Establecer conexión con la base de datos
+        connection = get_connection()
+        cursor = connection.cursor()
+        
+        # Ejecutar el procedimiento almacenado
+        cursor.callproc('informe_rol', [mes, anio, rut_empresa, codigo_rol])
+        
+        # Leer el resultado
+        resultados = cursor.fetchall()
+        if resultados:
+            datos = []
+            for resultado in resultados:
+                datos.append({
+                    'codigo_rol': resultado[0],
+                    'nombre_rol': resultado[1],
+                    'cantidad_empleados': int(resultado[2]),
+                    'costo_total': float(resultado[3])
+                })
+            return datos
+        
+        return None
+    
+    except Exception as e:
+        print(f"Error en costo_total_por_rol_service: {str(e)}")
+        raise
+    finally:
+        # Asegurar el cierre de conexión
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
+
+def generar_pdf_costo_total_por_rol(datos, mes, anio, codigo_rol):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    # Título
+    pdf.set_font("Arial", style="B", size=16)
+    pdf.cell(200, 10, txt="Informe de Costos por Rol", ln=True, align="C")
+
+    # Información del informe
+    pdf.set_font("Arial", size=12)
+    pdf.ln(10)
+    pdf.cell(200, 10, txt=f"Mes: {mes}", ln=True)
+    pdf.cell(200, 10, txt=f"Año: {anio}", ln=True)
+    pdf.cell(200, 10, txt=f"Código de Rol: {codigo_rol}", ln=True)
+
+    # Encabezados de tabla
+    pdf.ln(10)
+    pdf.set_font("Arial", style="B")
+    pdf.cell(70, 10, txt="Código de Rol", border=1, align="C")
+    pdf.cell(70, 10, txt="Nombre de Rol", border=1, align="C")
+    pdf.cell(50, 10, txt="Cantidad Empleados", border=1, align="C")
+    pdf.cell(50, 10, txt="Costo Total", border=1, align="C")
+    pdf.ln()
+
+    # Datos de la tabla
+    pdf.set_font("Arial")
+    for registro in datos:
+        pdf.cell(70, 10, txt=str(registro['codigo_rol']), border=1, align="C")
+        pdf.cell(70, 10, txt=registro.get('nombre_rol', 'N/A'), border=1, align="C")
+        pdf.cell(50, 10, txt=str(registro['cantidad_empleados']), border=1, align="C")
+        pdf.cell(50, 10, txt=f"${registro['costo_total']:,.2f}", border=1, align="C")
+        pdf.ln()
+
+    # Guardar el archivo en la ruta especificada
+    output_directory = "C:/Users/oliva/OneDrive/Documentos/GitHub/SRALv2/Backend/src/informes"
+    os.makedirs(output_directory, exist_ok=True)
+    pdf_path = os.path.join(output_directory, f"informe_costo_rol_{codigo_rol}_{mes}_{anio}.pdf")
+    pdf.output(pdf_path)
+
+    return pdf_path
