@@ -40,12 +40,19 @@ def costo_total_por_hora_service(mes, anio, rut_empresa):
         cursor.callproc('CalcularCostoTotalPorHora', [mes, anio, rut_empresa])
 
         # Leer el resultado
-        resultado = cursor.fetchall()
-        if resultado and len(resultado) > 0:
-            costo_total = resultado[0][0]  # Primer valor en la primera fila
-            return {"costo_total_por_hora": float(costo_total)}
+        resultado = cursor.fetchone()
+        if resultado:
+            return {
+                'total_horas_trabajadas': float(resultado[0]),
+                'costo_total_mensual': float(resultado[1]),
+                'costo_por_hora': float(resultado[2])
+            }
         else:
-            return {"costo_total_por_hora": 0.0}
+            return {
+                'total_horas_trabajadas': 0,
+                'costo_total_mensual': 0,
+                'costo_por_hora': 0
+            }
 
     except Exception as e:
         print(f"Error en costo_total_por_hora_service: {str(e)}")

@@ -60,6 +60,10 @@ def obtener_costo_total_por_hora():
         print(f"Error en obtener_costo_total_por_hora: {str(e)}")
         return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
 
+    except Exception as e:
+        print(f"Error en obtener_costo_total_por_hora: {str(e)}")
+        return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
+
 @bp.route('/promedio_horas', methods=['POST'])
 @jwt_required()
 def obtener_promedio_horas_trabajadas():
