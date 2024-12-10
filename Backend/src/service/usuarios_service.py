@@ -47,24 +47,21 @@ def obtener_usuarios(rut_empresa):
         cursor.close()
         connection.close()
 
-def eliminar_usuario(rut_usuario, rut_empresa):
+def eliminar_usuario(rut_usuario):
     try:
         connection = get_connection()
         cursor = connection.cursor()
 
-        # Llamada al procedimiento almacenado
-        cursor.callproc('eliminar_usuario', (rut_usuario, rut_empresa))
+        # Asegúrate de pasar el argumento como una tupla (con una coma al final)
+        cursor.callproc('eliminar_usuario', (rut_usuario,))  # Nota la coma al final
         connection.commit()
-
-        # Verificar si se afectó alguna fila
-        if cursor.rowcount > 0:
-            return True
-        return False
+        
     except Exception as e:
         raise e
     finally:
         cursor.close()
         connection.close()
+
 
         
 def edit_contrasena_usuario(rut_usuario, rut_empresa, contrasena_actual, nueva_contrasena):

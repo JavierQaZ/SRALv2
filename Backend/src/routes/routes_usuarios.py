@@ -73,29 +73,27 @@ def get_usuarios():
 
 @bp.route('/delete', methods=['DELETE'])
 @jwt_required()
-def delete_usuario(rut_usuario):
+def delete_usuario():
     try:
-        # Validar que el rut_usuario no esté vacío
-        if not rut_usuario:
-            return jsonify({"error": "El rut_usuario es requerido"}), 400
+        # Extraer los datos de la solicitud
+        data = request.get_json()
 
-        # Obtener rut_empresa desde los claims adicionales del JWT
-        claims = get_jwt()
-        rut_empresa = claims.get('rut_empresa')
+        # Validar que se envió el campo 'rut_usuario'
+        if 'rut_usuario' not in data:
+            return jsonify({"error": "Falta el campo 'rut_usuario'"}), 400
 
-        if not rut_empresa:
-            return jsonify({"error": "rut_empresa no encontrado en el token"}), 400
+        rut_usuario = data['rut_usuario']
 
         # Llamar al servicio para eliminar el usuario
-        resultado = eliminar_usuario(rut_usuario, rut_empresa)
+        resultado = eliminar_usuario(rut_usuario)
+
+       
+        return jsonify({"message": "Usuario eliminado exitosamente"}), 200
         
-        if resultado:
-            return jsonify({"message": "Usuario eliminado exitosamente"}), 200
-        else:
-            return jsonify({"error": "Usuario no encontrado o no autorizado"}), 404
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @bp.route('/edit_contrasena', methods=['PUT'])
 @jwt_required()
