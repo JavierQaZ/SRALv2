@@ -60,9 +60,13 @@ def generar_pdf_kpi_empleado(datos):
     pdf.cell(200, 10, txt=f"Tasa de Asistencia: {datos['tasa_asistencia']:.2f}%", ln=True)
     pdf.cell(200, 10, txt=f"Retrasos: {datos['retraso']:.2f}%", ln=True)
 
-    # Guardar PDF en directorio local del proyecto
-    directorio_informes = r"C:\Users\oliva\OneDrive\Documentos\GitHub\SRALv2\Backend\src\informes"
-    # Usar os.path.join para una ruta compatible con el sistema operativo
-    pdf_path = os.path.join(directorio_informes, f"informe_kpi_empleado_{datos['rut_empleado']}.pdf")
-    pdf.output(pdf_path)
-    return pdf_path
+    # Guardar PDF en directorio temporal
+    import tempfile
+    import os
+
+    # Crear un archivo temporal
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        pdf.output(temp_file.name)
+        temp_file_path = temp_file.name
+
+    return temp_file_path

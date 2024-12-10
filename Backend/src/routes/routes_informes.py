@@ -29,18 +29,21 @@ def generar_kpi_empleado_pdf():
         if not resultado:
             return jsonify({"error": "No se encontraron datos para los parámetros ingresados"}), 404
 
-        # Generar PDF
+      # Generar PDF
         pdf_path = generar_pdf_kpi_empleado(resultado)
 
         # Leer el archivo PDF y convertirlo a base64
         with open(pdf_path, 'rb') as pdf_file:
             pdf_base64 = base64.b64encode(pdf_file.read()).decode('utf-8')
 
+        # Eliminar el archivo temporal
+        import os
+        os.unlink(pdf_path)
+
         return jsonify({
             "pdf": pdf_base64,
             "filename": f"informe_kpi_empleado_{rut_empleado}.pdf"
         })
-
     except Exception as e:
         print(f"Error en generar_kpi_empleado_pdf: {str(e)}")
         return jsonify({"error": "Error interno del servidor", "detalle": str(e)}), 500
