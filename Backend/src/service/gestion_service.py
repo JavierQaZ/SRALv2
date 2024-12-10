@@ -28,3 +28,91 @@ def costo_total_service(mes, anio, rut_empresa):
             cursor.close()
         if 'connection' in locals():
             connection.close()
+
+
+def costo_total_por_hora_service(mes, anio, rut_empresa):
+    try:
+        # Establecer conexión con la base de datos
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Ejecutar el procedimiento almacenado
+        cursor.callproc('CalcularCostoTotalPorHora', [mes, anio, rut_empresa])
+
+        # Leer el resultado
+        resultado = cursor.fetchall()
+        if resultado and len(resultado) > 0:
+            costo_total = resultado[0][0]  # Primer valor en la primera fila
+            return {"costo_total_por_hora": float(costo_total)}
+        else:
+            return {"costo_total_por_hora": 0.0}
+
+    except Exception as e:
+        print(f"Error en costo_total_por_hora_service: {str(e)}")
+        raise
+
+    finally:
+        # Asegurar el cierre de conexión
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
+
+def promedio_horas_trabajadas_service(mes, anio, rut_empresa):
+    try:
+        # Establecer conexión con la base de datos
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Ejecutar el procedimiento almacenado
+        cursor.callproc('CalcularPromedioHorasTrabajadas', [mes, anio, rut_empresa])
+
+        # Leer el resultado
+        resultado = cursor.fetchall()
+        if resultado and len(resultado) > 0:
+            promedio_horas = resultado[0][0]  # Primer valor en la primera fila
+            return {"promedio_horas_trabajadas": float(promedio_horas)}
+        else:
+            return {"promedio_horas_trabajadas": 0.0}
+
+    except Exception as e:
+        print(f"Error en promedio_horas_trabajadas_service: {str(e)}")
+        raise
+
+    finally:
+        # Asegurar el cierre de conexión
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
+
+
+def costo_total_por_rol_service(mes, anio, rut_empresa):
+    try:
+        # Establecer conexión con la base de datos
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # Ejecutar el procedimiento almacenado
+        cursor.callproc('CalcularCostoTotalPorRol', [mes, anio, rut_empresa])
+
+        # Leer el resultado
+        resultados = []
+        for result in cursor.fetchall():
+            resultados.append({
+                'codigo_rol': result[0],
+                'costo_total': float(result[3])
+            })
+
+        return resultados
+
+    except Exception as e:
+        print(f"Error en costo_total_por_rol_service: {str(e)}")
+        raise
+
+    finally:
+        # Asegurar el cierre de conexión
+        if 'cursor' in locals():
+            cursor.close()
+        if 'connection' in locals():
+            connection.close()
