@@ -5,7 +5,7 @@ const BloqueGestionSelect = ({title, value}) => {
 
     const [roles, setRoles] = useState([])
     const [codigoRol, setCodigoRol] = useState("")
-    const [costosPorRol, setCostosPorRol] = useState([])
+    const [costosPorRol, setCostosPorRol] = useState({})
 
     useEffect(() => {
         axios.get('http://localhost:5000/rol/get')
@@ -18,22 +18,14 @@ const BloqueGestionSelect = ({title, value}) => {
     }, []);
 
     useEffect(() => {
-        if (Array.isArray(value) && value.length > 0) {
-            const costosPorRolObj = value.reduce((acc, item) => {
-                if (Array.isArray(item) && item.length > 0 && typeof item[0] === 'object') {
-                    try {
-                        const keys = Object.keys(item[0])
-                        if (keys.length > 0) {
-                            const key = keys[0]
-                            acc[key] = item[0][key]
-                        }
-                    } catch (error) {
-                        console.error("Error processing item:", item, error);
-                    }
+        if (Array.isArray(value)) {
+            const costosPorRolDict = value.reduce((acc, item) => {
+                if (item.codigo_rol && item.costo_total !== undefined){
+                    acc[item.codigo_rol] = item.costo_total
                 }
                 return acc;
             }, {})
-            setCostosPorRol(costosPorRolObj)
+            setCostosPorRol(costosPorRolDict)
         }
     }, [value])
 
@@ -58,8 +50,8 @@ const BloqueGestionSelect = ({title, value}) => {
             </select>
             {rolSeleccionado && codigoRol !== "-1" ? (
                 <p>
-                    {costosPorRol[rolSeleccionado.nombre_rol] !== undefined
-                        ? costosPorRol[rolSeleccionado.nombre_rol]
+                    {costosPorRol[codigoRol] !== undefined
+                        ? `$${costosPorRol[codigoRol].toLocaleString()}`
                         : ' - '}
                 </p>
             ):(
