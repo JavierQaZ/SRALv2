@@ -23,10 +23,30 @@ function Informes(){
             });
     }, []);
 
+    function base64ToBlob(base64, type = 'application/octet-stream') {
+        const byteCharacters = atob(base64);
+        const byteArrays = [];
+
+        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+            const slice = byteCharacters.slice(offset, offset + 512);
+            const byteNumbers = new Array(slice.length);
+
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        return new Blob(byteArrays, { type: type });
+    }
+
     //Informe 1 - Indicadores Laborales (individuales)
     const [i1Rut, setI1Rut] = useState("")
     const [i1Mes, setI1Mes] = useState("")
     const [i1Anio, setI1Anio] = useState("")
+    const [i1, setI1] = useState("")
 
     const handleOnChangei1Rut = (e) => {
         setI1Rut(e.target.value)}
@@ -51,7 +71,35 @@ function Informes(){
             setExitoInforme1("El mes debe ser entre 1 y 12")
         }
 
-        //axios
+        const i1datos = {
+            "rut_empleado" : i1Rut,
+            "mes": i1Mes,
+            "anio" : i1Anio
+        }
+
+        axios.post(`http://localhost:5000/informes/kpi_empleado`, i1datos)
+        .then ((response) => {
+            const link = document.createElement('a')
+            const pdfBlob = base64ToBlob(response.data.pdf, 'application/pdf')
+            const url = window.URL.createObjectURL(pdfBlob)
+            link.href = url
+            link.download = response.data.filename
+
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+
+            window.URL.revokeObjectURL(url)
+
+            setAlertType1("success")
+            setExitoInforme1("Informe generado exitosamente")
+        })
+        .catch((error) => {
+            setAlertType1("error")
+            setExitoInforme1("Error al generar el informe")
+        })
+
+
     }
 
     //Informe 2 - Costo Laboral por Rol
@@ -82,7 +130,13 @@ function Informes(){
             setExitoInforme2("El mes debe ser entre 1 y 12")
         }
 
-        //axios
+        const i2datos = {
+            "codigo_rol" : i2Rol,
+            "mes" : i2Mes,
+            "anio" : i2Anio
+        }
+
+        axios.post(``, i2datos)
     }
 
     //Informe 3 - Costo Total Laboral
@@ -109,7 +163,12 @@ function Informes(){
             setExitoInforme3("El mes debe ser entre 1 y 12")
         }
 
-        //axios
+        const i3datos = {
+            "mes" : i3Mes,
+            "anio" : i3Anio
+        }
+
+        axios.post(``, i3datos)
     }
 
     const handleOnChangeNombreInforme = (e) => {
