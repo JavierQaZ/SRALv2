@@ -46,11 +46,16 @@ function AgregarUsuario(){
             return;
         }
 
+        if (pwUsuario !== pwConfirmUsuario){
+            setAlertType("warning")
+            setExitoAgregarUsuario("Las contraseñas no son iguales")
+        }
+
         const nuevoUsuario = {
             //"nombre_bdd": nombre_frontend
             "rut_usuario": rutUsuario,
             "nombre_usuario": nombreUsuario,
-            "apellido_usuario": apellidoUsuario,
+            "apellidos_usuario": apellidoUsuario,
             "email_usuario": emailUsuario,
             "contrasena_usuario": pwUsuario,
         }
