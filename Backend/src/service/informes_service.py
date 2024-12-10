@@ -1,5 +1,6 @@
 from ..database.db_conección import get_connection
 from fpdf import FPDF
+import os
 
 def calcular_kpi_empleado_service(mes, anio, rut_empresa, rut_empleado):
     try:
@@ -59,7 +60,9 @@ def generar_pdf_kpi_empleado(datos):
     pdf.cell(200, 10, txt=f"Tasa de Asistencia: {datos['tasa_asistencia']:.2f}%", ln=True)
     pdf.cell(200, 10, txt=f"Retrasos: {datos['retraso']:.2f}%", ln=True)
 
-    # Guardar PDF
-    pdf_path = f"/mnt/data/informe_kpi_empleado_{datos['rut_empleado']}.pdf"
+    # Guardar PDF en directorio local del proyecto
+    directorio_informes = r"C:\Users\oliva\OneDrive\Documentos\GitHub\SRALv2\Backend\src\informes"
+    # Usar os.path.join para una ruta compatible con el sistema operativo
+    pdf_path = os.path.join(directorio_informes, f"informe_kpi_empleado_{datos['rut_empleado']}.pdf")
     pdf.output(pdf_path)
     return pdf_path

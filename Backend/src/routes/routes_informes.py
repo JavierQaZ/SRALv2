@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request,send_file
 from flask_jwt_extended import jwt_required, get_jwt
 from ..service.informes_service import calcular_kpi_empleado_service,generar_pdf_kpi_empleado
+import base64
 
 bp = Blueprint('informes_blueprint', __name__)
 
@@ -30,7 +31,15 @@ def generar_kpi_empleado_pdf():
 
         # Generar PDF
         pdf_path = generar_pdf_kpi_empleado(resultado)
-        return send_file(pdf_path, as_attachment=True)
+
+        # Leer el archivo PDF y convertirlo a base64
+        with open(pdf_path, 'rb') as pdf_file:
+            pdf_base64 = base64.b64encode(pdf_file.read()).decode('utf-8')
+
+        return jsonify({
+            "pdf": pdf_base64,
+            "filename": f"informe_kpi_empleado_{rut_empleado}.pdf"
+        })
 
     except Exception as e:
         print(f"Error en generar_kpi_empleado_pdf: {str(e)}")
