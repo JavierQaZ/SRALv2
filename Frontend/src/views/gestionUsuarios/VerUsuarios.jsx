@@ -1,28 +1,25 @@
-import React, { useState } from  'react'
+import React, { useEffect, useState } from  'react'
 import axios from 'axios'
 
 function VerUsuarios(){
     const [datos, setDatos] = useState([])
 
-    axios.get(`http://localhost:5000/usuarios/get`)
+    const getData = async () => {
+        axios.get(`http://localhost:5000/usuarios/get`)
             .then((response) => {
-                if (response.data && response.data.datos) {
-                    setDatos(response.data.datos);
-                } else {
-                    setDatos([]);
-                    console.error('Error al obtener los datos: ', response.data);
-                }
+                setDatos(response.data)
             })
-            .catch((error) => {
-                console.log("Error al obtener los datos", error);
-            });
+    }
 
+    useEffect(() => {
+        getData()
+    })
 
     return (
         <>
             <h4>Visualización de Usuarios</h4>
             <div>
-                <table border="1">
+                <table border="1" className='w-100'>
                     <thead>
                         <tr>
                             <th>RUT</th>
