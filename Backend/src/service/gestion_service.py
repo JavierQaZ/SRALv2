@@ -14,9 +14,9 @@ def costo_total_service(mes, anio, rut_empresa):
         resultados = cursor.fetchall()
         if resultados:
             costo_total = resultados[0][0]  # Primer valor en la primera fila
-            return {"costo_total": float(costo_total)}
+            return {"costo_total": str(costo_total)}
         else:
-            return {"costo_total": 0.0}
+            return {"costo_total": str(0)}
     
     except Exception as e:
         print(f"Error en costo_total_service: {e}")
@@ -78,9 +78,9 @@ def promedio_horas_trabajadas_service(mes, anio, rut_empresa):
         resultado = cursor.fetchall()
         if resultado and len(resultado) > 0:
             promedio_horas = resultado[0][0]  # Primer valor en la primera fila
-            return {"promedio_horas_trabajadas": float(promedio_horas)}
+            return {"promedio_horas_trabajadas": str(promedio_horas)}
         else:
-            return {"promedio_horas_trabajadas": 0.0}
+            return {"promedio_horas_trabajadas": 0}
 
     except Exception as e:
         print(f"Error en promedio_horas_trabajadas_service: {str(e)}")
