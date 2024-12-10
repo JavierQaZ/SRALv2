@@ -60,8 +60,7 @@ def generar_pdf_kpi_empleado(datos):
     pdf.cell(200, 10, txt=f"Tasa de Asistencia: {datos['tasa_asistencia']:.2f}%", ln=True)
     pdf.cell(200, 10, txt=f"Retrasos: {datos['retraso']:.2f}%", ln=True)
 
-    # Guardar PDF en directorio temporal
-    import tempfile
+
     
 
     # Crear un archivo temporal
@@ -142,10 +141,10 @@ def generar_pdf_costo_total_por_rol(datos, mes, anio, codigo_rol):
         pdf.cell(50, 10, txt=f"${registro['costo_total']:,.2f}", border=1, align="C")
         pdf.ln()
 
-    # Guardar el archivo en la ruta especificada
-    output_directory = "C:/Users/oliva/OneDrive/Documentos/GitHub/SRALv2/Backend/src/informes"
-    os.makedirs(output_directory, exist_ok=True)
-    pdf_path = os.path.join(output_directory, f"informe_costo_rol_{codigo_rol}_{mes}_{anio}.pdf")
-    pdf.output(pdf_path)
 
-    return pdf_path
+    # Crear un archivo temporal
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        pdf.output(temp_file.name)
+        temp_file_path = temp_file.name
+
+    return temp_file_path
