@@ -1,5 +1,4 @@
 from app import app  # Asegúrate de importar la app configurada correctamente
-from flask_jwt_extended import create_access_token
 import pytest
 
 @pytest.fixture

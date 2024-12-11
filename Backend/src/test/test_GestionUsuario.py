@@ -1,6 +1,4 @@
 import pytest
-import sys
-import os
 from flask_jwt_extended import JWTManager, create_access_token
 from config import config
 from src import create_app
