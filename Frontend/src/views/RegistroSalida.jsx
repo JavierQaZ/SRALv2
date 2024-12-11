@@ -88,7 +88,7 @@ function RegistroSalida() {
                                 </label>
                                 <button type="submit" className="btn mt-3"
                                     style={{ backgroundColor: '#121113', color: '#ffffff'}}>
-                                    Registrar Entrada
+                                    Registrar Salida
                                 </button>
                                 {ping}
                             </div>
