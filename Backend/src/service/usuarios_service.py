@@ -1,5 +1,4 @@
 from ..database.db_conección import get_connection
-import bcrypt
 
 def agregar_usuario_service(rut_usuario, nombre_usuario, apellidos_usuario, contrasena_usuario, email_usuario, rut_empresa):
     try:
@@ -86,7 +85,6 @@ def editar_contrasena_usuario(rut_usuario, nueva_contrasena):
         connection.close()
 
 
-
 def verificar_contrasena_actual(rut_usuario, contrasena_actual):
     try:
         connection = get_connection()
@@ -99,7 +97,7 @@ def verificar_contrasena_actual(rut_usuario, contrasena_actual):
         )
         resultado = cursor.fetchone()
 
-        if not resultado or not bcrypt.checkpw(contrasena_actual.encode('utf-8'), resultado[0].encode('utf-8')):
+        if not resultado or resultado[0] != contrasena_actual:
             return False  # Contraseña actual incorrecta
 
         return True  # Contraseña correcta
