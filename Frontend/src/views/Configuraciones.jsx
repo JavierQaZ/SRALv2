@@ -46,7 +46,7 @@ function Configuraciones(){
         }
 
         if (nuevaContrasena.length < 8){
-            setAlertType("alert")
+            setAlertType("warning")
             setExitoCambiarContrasena("La contraseña debe tener al menos 8 caracteres")
             return
         }
