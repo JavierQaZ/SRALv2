@@ -29,7 +29,7 @@ function RegistroInicio() {
         handleCaptureData();
 
         if (rut === ""){
-            setAlertType("alert")
+            setAlertType("warning")
             setExitoRegistroInicio("No hay RUT para registrar")
             return
         }

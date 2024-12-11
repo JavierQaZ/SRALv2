@@ -53,7 +53,7 @@ function AgregarUsuario(){
         }
 
         if (pwUsuario.length < 8){
-            setAlertType("alert")
+            setAlertType("warning")
             setExitoAgregarUsuario("La contraseña debe tener al menos 8 caracteres")
             return
         }
