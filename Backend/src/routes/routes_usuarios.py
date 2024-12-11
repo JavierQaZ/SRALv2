@@ -38,8 +38,11 @@ def add_usuario():
         return jsonify({"message": "Usuario agregado exitosamente"}), 201
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
+        # Manejo de error de unicidad
+        return jsonify({'error': 'Ya existe un usuario con ese rut o email'}), 400
+    except Exception as e:
+        # Manejo general de errores
+        return jsonify({'error': str(e)}), 500
 
 @bp.route('/get', methods=['GET'])
 @jwt_required()
