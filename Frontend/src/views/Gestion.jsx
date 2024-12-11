@@ -1,8 +1,3 @@
-//ELIMINAR ESTE COMENTARIO CUANDO ESTÉ RE-HECHO
-//se debe re-estructurar la lógica, además de las alertas.
-//Asimilarlo a VisualizacionDatos
-//Coordinar con Backend
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Alert from '@mui/material/Alert'
