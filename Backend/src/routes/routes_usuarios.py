@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
 from ..service.usuarios_service import agregar_usuario_service,obtener_usuarios, eliminar_usuario, editar_contrasena_usuario, verificar_contrasena_actual
+import bcrypt , re
 
 bp = Blueprint('usuarios_Blueprint', __name__)
 
@@ -24,13 +25,20 @@ def add_usuario():
         rut_empresa = get_jwt().get('rut_empresa')
         if not rut_empresa:
             return jsonify({"error": "rut_empresa no encontrado en el token"}), 400
+        
+        try:
+            contrasena_cifrada = bcrypt.hashpw(
+                data['contrasena_usuario'].encode('utf-8'), bcrypt.gensalt()
+            ).decode('utf-8')
+        except Exception as e:
+            return jsonify({"error": f"Error al hashear la contraseña: {str(e)}"}), 500
 
         # Llama al servicio para agregar el usuario
         agregar_usuario_service(
             rut_usuario=data['rut_usuario'],
             nombre_usuario=data['nombre_usuario'],
             apellidos_usuario=data['apellidos_usuario'],
-            contrasena_usuario=data['contrasena_usuario'],
+            contrasena_usuario=contrasena_cifrada,  # Usamos la contraseña cifrada
             email_usuario=data['email_usuario'],
             rut_empresa=rut_empresa
         )
@@ -130,10 +138,32 @@ def edit_contrasena():
         if not resultado:
             return jsonify({"error": "La contraseña actual no es correcta."}), 401
 
-        # Llamar al servicio para actualizar la nueva contraseña
+        # Generar hash de la nueva contraseña con depuración
+        try:
+            # Convertir a bytes
+            nueva_contrasena_bytes = data['nueva_contrasena'].encode('utf-8')
+            
+            # Generar un salt válido
+            salt = bcrypt.gensalt(rounds=12)
+            
+            # Depuración del salt
+            print(f"Salt generado: {salt}")
+            
+            # Generar hash de la contraseña
+            nueva_contrasena_cifrada = bcrypt.hashpw(nueva_contrasena_bytes, salt)
+            
+            # Convertir hash a string para base de datos
+            nueva_contrasena_str = nueva_contrasena_cifrada.decode('utf-8')
+        
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return jsonify({"error": f"Error al generar hash de contraseña: {str(e)}"}), 500
+
+        # Actualizar la contraseña en la base de datos
         resultado = editar_contrasena_usuario(
             rut_usuario=rut_usuario,
-            nueva_contrasena=data['nueva_contrasena']
+            nueva_contrasena=nueva_contrasena_str
         )
 
         if resultado:
@@ -142,4 +172,6 @@ def edit_contrasena():
             return jsonify({"error": "Hubo un error al actualizar la contraseña."}), 500
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": f"Ocurrió un error inesperado: {str(e)}"}), 500
