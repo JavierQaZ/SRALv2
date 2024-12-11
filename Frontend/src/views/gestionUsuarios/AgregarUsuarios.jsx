@@ -49,6 +49,13 @@ function AgregarUsuario(){
         if (pwUsuario !== pwConfirmUsuario){
             setAlertType("warning")
             setExitoAgregarUsuario("Las contraseñas no son iguales")
+            return
+        }
+
+        if (pwUsuario.length < 8){
+            setAlertType("alert")
+            setExitoCambiarContrasena("La contraseña debe tener al menos 8 caracteres")
+            return
         }
 
         const nuevoUsuario = {

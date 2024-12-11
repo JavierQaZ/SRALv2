@@ -38,9 +38,16 @@ function Configuraciones(){
             setExitoCambiarContrasena("Todos los campos son obligatorios")
             return
         }
+
         if (nuevaContrasena !== confirmacionContrasena){
             setAlertType("warning")
             setExitoCambiarContrasena("La contraseña nueva y la confirmación no son iguales")
+            return
+        }
+
+        if (nuevaContrasena.length < 8){
+            setAlertType("alert")
+            setExitoCambiarContrasena("La contraseña debe tener al menos 8 caracteres")
             return
         }
 
