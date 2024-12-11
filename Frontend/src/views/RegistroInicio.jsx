@@ -27,6 +27,13 @@ function RegistroInicio() {
     const handleSubmit = (e) => {
         e.preventDefault();
         handleCaptureData();
+
+        if (rut === ""){
+            setAlertType("alert")
+            setExitoRegistroInicio("No hay RUT para registrar")
+            return
+        }
+
         const registroRutInicio = {
             "rut_empleado":  rut,
             "horaIngreso_registro": currentDateTime

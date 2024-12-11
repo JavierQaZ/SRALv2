@@ -32,6 +32,12 @@ function RegistroSalida() {
             "horaSalida_registro": currentDateTime
         }
 
+        if (rut === ""){
+            setAlertType("alert")
+            setExitoRegistroInicio("No hay RUT para registrar")
+            return
+        }
+
         axios.post('http://localhost:5000/r_salida/add', registroRutSalida)
             .then((response) => {
                 setExitoRegistroSalida("Registro de salida exitoso")
